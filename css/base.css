@@ -1,3 +1,4 @@
+@font-face { font-family: 'Chakra Petch'; font-weight: 700; font-display: swap; src: url('../fonts/chakra-petch-700.woff2') format('woff2'); }
 /* Tokens, Reset und gemeinsame Komponenten (Lagerfeuer-Look, siehe docs/SPEC.md) */
 
 :root {
@@ -14,6 +15,8 @@
   --radius-card: 20px;
   --radius-btn: 14px;
   --ease-spring: cubic-bezier(.2, .9, .3, 1.2);
+  --font-ui: ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+  --font-system: "Chakra Petch", ui-rounded, system-ui, sans-serif;
 }
 
 /* Reset */

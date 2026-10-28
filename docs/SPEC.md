@@ -21,7 +21,7 @@ Statisches HTML + CSS + JavaScript (ES-Module, Vanilla), kein Bundler. Läuft in
 | `js/views/ritual.js` | Abend-Ritual (Overlay mit Karten) |
 | `js/views/review.js` | Rückblick-Screen |
 | `js/views/settings.js` | Einstellungen (Sheet): Erinnerung, Kalender, Export/Import |
-| `js/ui/flame.js` | Animiertes SVG-Feuer `flameSVG(stage)` |
+| `js/ui/fire.js` | Partikelfeuer mit Blitzen `createFire(canvas, tier)` |
 | `js/ui/confetti.js` | Konfetti (Canvas) `burst()` |
 | `css/base.css` + je eine CSS-Datei pro View | Tokens, Layout |
 | `sw.js`, `manifest.webmanifest`, `icons/` | PWA, offline |
@@ -47,7 +47,7 @@ Statisches HTML + CSS + JavaScript (ES-Module, Vanilla), kein Bundler. Läuft in
 - **Streak**: zusammenhängende erledigte Tage, rückwärts gezählt ab heute. Ist heute noch nicht erledigt, wird ab gestern gezählt (der Streak bleibt bis Mitternacht erhalten).
 - **Freeze**: ein einzelner verpasster Tag wird überbrückt, wenn in derselben ISO-Woche (Mo–So) noch kein anderer Tag überbrückt wurde. Zwei verpasste Tage hintereinander beenden den Streak. Überbrückte Tage zählen nicht als Streak-Tage, unterbrechen ihn aber nicht. Freezes werden nur berechnet, nicht gespeichert.
 - **Erledigte Morgen-Ziele zählen als Gains**: Im Ritual stehen abgehakte Ziele von gestern als vorausgefüllte Gains bereit (sie bleiben änderbar).
-- **Feuer-Stufen** (`fireStage(streak)`): 0 → `glut`, 1–2 → `funke`, 3–6 → `flamme`, 7–29 → `feuer`, ab 30 → `lagerfeuer`.
+- **Rang & Feuer** (`rankInfo(n)` in `js/streak.js`, n = erledigte Abende gesamt, fällt nie zurück): Rang E (0) · D Beständig (7) · C Glühend (30) · B Arkan (90) · A Sturm (180) · S Monarch (365). Jeder Rang ab D ist ein Titel. Das Feuer (`js/ui/fire.js`, Canvas-Partikel) hat 7 Stufen (0, 3, 7, 30, 90, 180, 365) mit eigener Farbe und Größe, ab B kommen Blitze dazu. Beim Rang-Aufstieg im Ritual: weißer Blitz, Blitzeinschläge, System-Fenster „Rang-Aufstieg X → Y“.
 
 ## Design
 Lagerfeuer-Look, dunkel und warm, mobil zuerst (375 px), sichere Bereiche (`env(safe-area-inset-*)`).

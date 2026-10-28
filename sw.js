@@ -1,4 +1,4 @@
-const CACHE = 'daily-streak-v1';
+const CACHE = 'daily-streak-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -16,7 +16,8 @@ const ASSETS = [
   './js/views/ritual.js',
   './js/views/review.js',
   './js/views/settings.js',
-  './js/ui/flame.js',
+  './js/ui/fire.js',
+  './fonts/chakra-petch-700.woff2',
   './js/ui/confetti.js',
   './icons/icon.svg',
   './icons/icon-180.png',

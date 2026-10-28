@@ -45,11 +45,24 @@
 @keyframes r-pop { 0% { transform: scale(.8); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
 .r-label { flex: 1; overflow-wrap: anywhere; }
 .r-done { align-items: center; text-align: center; padding-top: 40px; }
-.r-flame { width: 160px; height: 160px; }
-.r-flame svg { width: 100%; height: 100%; }
+.r-fire { width: 100%; max-width: 340px; height: 260px; margin: 0 auto -28px; }
+.r-rankup {
+  align-self: stretch; text-align: center; padding: 12px 14px; margin: 4px 0 12px;
+  display: grid; gap: 2px; clip-path: inset(50% 0 50% 0);
+}
+.r-rankup b { font-size: 20px; letter-spacing: .06em; color: var(--tier-b); }
+.r-rankup span { font-family: var(--font-ui); font-size: 14px; color: #a9c9e6; }
+.rank-up .r-rankup { animation: sys-open .7s cubic-bezier(.16, 1, .3, 1) forwards; }
+@keyframes sys-open { to { clip-path: inset(0 0 0 0); } }
+.rank-up::after { content: ''; position: fixed; inset: 0; background: #fff; pointer-events: none; animation: flash .7s cubic-bezier(.16, 1, .3, 1) forwards; }
+@keyframes flash { from { opacity: .8; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .r-rankup { clip-path: none; }
+  .rank-up::after { display: none; }
+}
 .r-plus { position: absolute; top: 90px; font-size: 32px; font-weight: 800; color: var(--amber); opacity: 0; animation: r-rise 1.2s ease-out 400ms; }
 @keyframes r-rise { 0% { opacity: 0; transform: translateY(20px); } 25% { opacity: 1; } 100% { opacity: 0; transform: translateY(-50px); } }
-.r-count { font-size: 64px; font-weight: 800; line-height: 1.1; margin: 8px 0; }
+.r-count { font-size: 64px; font-weight: 800; line-height: 1.1; margin: 8px 0; color: var(--tier-b, var(--text)); font-variant-numeric: tabular-nums; }
 .r-saved { font-size: 22px; font-weight: 700; margin: 24px 0 0; }
 @media (prefers-reduced-motion: reduce) {
   .ritual { animation: r-fade 200ms linear; }
@@ -59,3 +72,4 @@
   .r-plus { display: none; }
 }
 @keyframes r-fade { from { opacity: 0; } to { opacity: 1; } }
+.r-done .r-nav { align-self: stretch; }

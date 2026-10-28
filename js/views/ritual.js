@@ -1,8 +1,8 @@
 // Abend-Ritual: Vollbild-Overlay mit Karten. Speichert erst im letzten Schritt.
 import { load, getDay, setDay } from '../store.js';
-import { computeStreak, fireStage } from '../streak.js';
+import { computeStreak, rankInfo, stats } from '../streak.js';
 import { todayISO, addDays, formatDE } from '../date.js';
-import { flameSVG } from '../ui/flame.js';
+import { createFire } from '../ui/fire.js';
 import { burst } from '../ui/confetti.js';
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -26,6 +26,7 @@ export function open(overlayEl, app) {
   const y = getDay(state, yesterday);
   const wasDone = computeStreak(state.days, today).todayDone;
   const oldStreak = computeStreak(state.days, today).current;
+  const oldRank = rankInfo(stats(state.days, today).activeDays);
 
   const gains = [0, 1, 2].map((i) => existing?.gains?.[i] ?? '');
   const goals = [0, 1, 2].map((i) => existing?.goals?.[i]?.text ?? '');
@@ -159,15 +160,17 @@ export function open(overlayEl, app) {
     if (yGoals.length) setDay(state, yesterday, { ...y, goals: yGoals });
     finished = true;
     const newStreak = computeStreak(state.days, today).current;
-    showDone(newStreak);
+    showDone(newStreak, rankInfo(stats(state.days, today).activeDays));
   }
 
-  function showDone(newStreak) {
+  function showDone(newStreak, newRank) {
+    const rankUp = newRank.rank !== oldRank.rank;
     bars.querySelectorAll('i').forEach((el) => { el.classList.remove('now'); el.classList.add('done'); });
     const card = document.createElement('div');
     card.className = 'r-card r-done from-right';
     card.innerHTML = `
-      <div class="r-flame" aria-hidden="true">${flameSVG(fireStage(oldStreak))}</div>
+      <div class="r-fire" aria-hidden="true"><canvas></canvas></div>
+      ${rankUp ? `<div class="sys r-rankup" role="status"><b>Rang-Aufstieg ${oldRank.rank.rank} → ${newRank.rank.rank}</b><span>Neuer Titel: ${newRank.rank.name}</span></div>` : ''}
       ${wasDone ? '<p class="r-saved">Gespeichert</p>' : `<div class="r-plus" aria-hidden="true">+1</div>
         <div class="r-count" aria-live="polite">${oldStreak}</div>
         <p class="r-text r-center">${newStreak === 1 ? 'Dein Feuer ist entfacht' : `Dein Feuer brennt seit ${newStreak} Tagen`}</p>`}
@@ -175,11 +178,13 @@ export function open(overlayEl, app) {
       <div class="r-nav"><span></span><button class="btn btn-primary" type="button" data-done>Fertig</button></div>`;
     stage.replaceChildren(card);
     card.querySelector('[data-done]').addEventListener('click', close);
-    const flame = card.querySelector('.r-flame');
+    const fire = createFire(card.querySelector('.r-fire canvas'), oldRank.tier);
+    card.style.setProperty('--tier-a', newRank.tier.c[0]);
+    card.style.setProperty('--tier-b', newRank.tier.c[1]);
     setTimeout(() => {
-      flame.innerHTML = flameSVG(fireStage(newStreak));
-      if (!reduced) flame.animate([{ transform: 'scale(.85)' }, { transform: 'scale(1.08)', offset: .6 }, { transform: 'scale(1)' }],
-        { duration: 500, easing: 'cubic-bezier(.34,1.56,.64,1)' });
+      fire.set(newRank.tier);
+      if (!wasDone || rankUp) fire.burst();
+      if (rankUp) card.classList.add('rank-up');
     }, 400);
     if (!wasDone) {
       const count = card.querySelector('.r-count');

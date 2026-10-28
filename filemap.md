@@ -7,7 +7,8 @@
 - `js/streak.js` — Streak/Freeze/Feuer-Stufen, reine Logik
 - `js/store.js` — localStorage, Export/Import
 - `js/views/*.js` — Screens: home, ritual, review, settings
-- `js/ui/flame.js` — animiertes SVG-Feuer
+- `js/ui/fire.js` — Partikelfeuer mit Blitzen (Canvas), Farben aus `TIERS` in streak.js
+- `fonts/` — Chakra Petch (System-/Rang-Schrift, selbst gehostet)
 - `js/ui/confetti.js` — Konfetti
 - `sw.js` — Offline-Cache
 - `manifest.webmanifest`, `icons/` — PWA-Installation

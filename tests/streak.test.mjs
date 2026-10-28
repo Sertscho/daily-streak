@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { todayISO, parseISO, addDays, diffDays, weekdayMon0, isoWeekKey, formatDE } from '../js/date.js';
-import { isDayComplete, computeStreak, fireStage, stats } from '../js/streak.js';
+import { isDayComplete, computeStreak, rankInfo, stats } from '../js/streak.js';
 import { defaultState, parseState, load, save, getDay, setDay, exportJSON, importJSON } from '../js/store.js';
 
 const done = { gains: ['a', 'b', 'c'] };
@@ -119,9 +119,23 @@ test('streak: best bleibt nach Reset erhalten', () => {
   assert.equal(r.current, 2);
 });
 
-test('fireStage Grenzen', () => {
-  const exp = { 0: 'glut', 1: 'funke', 2: 'funke', 3: 'flamme', 6: 'flamme', 7: 'feuer', 29: 'feuer', 30: 'lagerfeuer' };
-  for (const [n, s] of Object.entries(exp)) assert.equal(fireStage(Number(n)), s);
+test('rankInfo: Ränge an den Grenzen', () => {
+  const exp = { 0: 'E', 6: 'E', 7: 'D', 29: 'D', 30: 'C', 89: 'C', 90: 'B', 179: 'B', 180: 'A', 364: 'A', 365: 'S', 900: 'S' };
+  for (const [n, r] of Object.entries(exp)) assert.equal(rankInfo(Number(n)).rank.rank, r, `n=${n}`);
+  assert.equal(rankInfo(2).tier.d, 0);
+  assert.equal(rankInfo(3).tier.d, 3);
+});
+
+test('rankInfo: Fortschritt, Rest und Titel', () => {
+  const r = rankInfo(10);
+  assert.equal(r.next.rank, 'C');
+  assert.equal(r.toNext, 20);
+  assert.ok(Math.abs(r.progress - 3 / 23) < 1e-9);
+  assert.deepEqual(r.titles.filter((t) => t.unlocked).map((t) => t.name), ['Beständig']);
+  const s = rankInfo(400);
+  assert.equal(s.next, null);
+  assert.equal(s.progress, 1);
+  assert.equal(s.titles.every((t) => t.unlocked), true);
 });
 
 test('stats', () => {

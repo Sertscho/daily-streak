@@ -1,7 +1,7 @@
 import { load, getDay } from '../store.js';
-import { computeStreak, fireStage } from '../streak.js';
+import { computeStreak, rankInfo, stats } from '../streak.js';
 import { todayISO, addDays } from '../date.js';
-import { flameSVG } from '../ui/flame.js';
+import { createFire } from '../ui/fire.js';
 
 const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
@@ -14,20 +14,29 @@ export function render(el, app) {
   const s = computeStreak(state.days, today);
   const day = getDay(state, today);
   const prevGoals = (getDay(state, addDays(today, -1))?.goals ?? []).filter((g) => String(g?.text ?? '').trim());
+  const rk = rankInfo(stats(state.days, today).activeDays);
   const showHint = !s.todayDone && (new Date().getHours() >= 18 || s.current > 0);
 
   const sections = [];
   sections.push(`<header class="home-head"><span class="home-title">Daily Streak</span><button type="button" class="icon-btn" aria-label="Einstellungen" data-action="settings">${GEAR}</button></header>`);
-  sections.push(`<div class="home-flame">${flameSVG(fireStage(s.current))}</div>`);
+  sections.push(`<div class="home-fire" role="img" aria-label="Feuer, Rang ${rk.rank.rank}"><canvas></canvas></div>`);
   sections.push(`<div class="home-count"><div class="home-num">${s.current}</div><p class="muted">${s.current === 0 ? 'Zünde dein Feuer heute Abend an' : s.current === 1 ? 'Tag in Folge' : 'Tage in Folge'}</p></div>`);
   sections.push(`<span class="freeze-chip" title="Einen verpassten Abend pro Woche fängt der Freeze auf.">${SNOW}${s.freezeAvailable ? 'Freeze verfügbar' : 'Freeze diese Woche genutzt'}</span>`);
+  const rankPanel = `<section class="sys rank-panel" aria-label="Dein Rang">
+    <div class="rank-top"><div class="rank-letter">${rk.rank.rank}</div>
+      <div class="rank-meta"><b>Rang ${rk.rank.rank} · ${rk.rank.name}</b>
+        <span>${rk.next ? `Noch ${rk.toNext} ${rk.toNext === 1 ? 'Abend' : 'Abende'} bis Rang ${rk.next.rank}` : 'Höchster Rang erreicht'}</span></div></div>
+    <div class="rank-bar"><i style="width:${Math.round(rk.progress * 100)}%"></i></div>
+    <ul class="titles" aria-label="Titel">${rk.titles.map((t) => `<li class="${t.unlocked ? 'on' : ''}" title="${t.unlocked ? 'Freigeschaltet' : `Ab ${t.d} Abenden`}">${t.name}</li>`).join('')}</ul>
+  </section>`;
+  if (s.todayDone) sections.push(rankPanel);
   if (showHint) sections.push('<p class="muted home-hint">Heute noch offen – dein Feuer wartet</p>');
   if (prevGoals.length) {
     sections.push(`<section class="card"><h2>Heute vorgenommen</h2><ul>${prevGoals.map((g) =>
       `<li class="${g.done ? 'done' : ''}"><span class="mark">${g.done ? '✓' : ''}</span><span>${esc(g.text)}</span></li>`).join('')}</ul></section>`);
   }
   if (!s.todayDone) {
-    sections.push('<button type="button" class="btn btn-primary" data-action="ritual">Abend-Ritual starten</button>');
+    sections.push('<button type="button" class="btn btn-primary" data-action="ritual">Abend-Ritual starten</button>', rankPanel);
   } else {
     const gains = (day?.gains ?? []).filter((g) => String(g).trim());
     const goals = (day?.goals ?? []).filter((g) => String(g?.text ?? '').trim());
@@ -37,7 +46,8 @@ export function render(el, app) {
       + '<button type="button" class="btn btn-ghost" data-action="ritual">Bearbeiten</button></section>');
   }
 
-  el.innerHTML = `<div class="home">${sections.map((h, i) => h.replace(/^<(\w+)/, `<$1 style="--i:${i}"`)).join('')}</div>`;
+  el.innerHTML = `<div class="home" style="--tier-a:${rk.tier.c[0]};--tier-b:${rk.tier.c[1]}">${sections.map((h, i) => h.replace(/^<(\w+)/, `<$1 style="--i:${i}"`)).join('')}</div>`;
+  createFire(el.querySelector('.home-fire canvas'), rk.tier);
   el.querySelector('[data-action="settings"]').addEventListener('click', () => app.openSettings());
   el.querySelectorAll('[data-action="ritual"]').forEach((b) => b.addEventListener('click', () => app.openRitual()));
 }
