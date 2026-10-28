@@ -1,0 +1,15 @@
+# Filemap
+- `index.html` — App-Shell, Meta-Tags, Tab-Leiste
+- `css/base.css` — Tokens, Reset, gemeinsame Komponenten
+- `css/home.css`, `css/ritual.css`, `css/review.css`, `css/settings.css` — Styles je View
+- `js/app.js` — Start, Router, SW-Registrierung
+- `js/date.js` — Datumshilfen (lokale Zeit)
+- `js/streak.js` — Streak/Freeze/Feuer-Stufen, reine Logik
+- `js/store.js` — localStorage, Export/Import
+- `js/views/*.js` — Screens: home, ritual, review, settings
+- `js/ui/flame.js` — animiertes SVG-Feuer
+- `js/ui/confetti.js` — Konfetti
+- `sw.js` — Offline-Cache
+- `manifest.webmanifest`, `icons/` — PWA-Installation
+- `tests/` — node --test
+- `docs/` — SPEC, PLAN
