@@ -44,6 +44,8 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 setInterval(checkReminder, 60_000);
 
 if ('serviceWorker' in navigator) {
+  // Neue Version aktiv (skipWaiting + claim im SW): einmal neu laden, damit sie sofort sichtbar ist.
+  if (navigator.serviceWorker.controller) navigator.serviceWorker.addEventListener('controllerchange', () => location.reload(), { once: true });
   navigator.serviceWorker.register('./sw.js')
     .catch((err) => console.error('Service Worker konnte nicht registriert werden', err));
 }
