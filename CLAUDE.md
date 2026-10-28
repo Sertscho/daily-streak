@@ -4,7 +4,7 @@ PWA, statisches HTML/CSS/Vanilla-JS (ES-Module), **kein Build-Schritt, keine npm
 
 ## Befehle
 - Lokal starten: `python3 -m http.server 8080` → http://localhost:8080
-- Tests: `node --test tests/`
+- Tests: `node --test` (ohne Pfad; Node 24)
 
 ## Regeln
 - Spec: `docs/SPEC.md` (Datenmodell, Regeln, Design-Tokens). Plan: `docs/PLAN.md`. Navigation: `filemap.md`.
