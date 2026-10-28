@@ -8,7 +8,7 @@
 | 4 | Abend-Ritual + Konfetti | Medium | 2 | fertig |
 | 5 | Rückblick | Medium | 2 | fertig |
 | 6 | Einstellungen | Medium | 2 | fertig |
-| 7 | Veröffentlichen | Director | 3–6 | offen (Hosting klären, Repo privat) |
+| 7 | Veröffentlichen | Director | 3–6 | fertig |
 
 1. **Grundgerüst**: alle Dateien aus der Architektur in SPEC.md anlegen. `index.html` (Shell, Viewport mit `viewport-fit=cover`, Apple-Meta-Tags, Manifest-Link), `css/base.css` (Tokens, Reset, Tab-Leiste, Buttons, Karten, Sheet-Grundstil), `js/app.js` (Router + Tab-Leiste + SW-Registrierung), die Views und UI-Module als Platzhalter mit fester Export-Signatur, `sw.js` (Cache-first für alle App-Dateien, Versionsname), `manifest.webmanifest`, Icons (SVG + PNG 180/192/512, mit Python ohne Zusatzpakete erzeugt), `.gitignore`. Prüfen: lokaler Server, beide Tabs erreichbar, keine Konsolenfehler.
 2. **Logik + Tests**: `js/date.js`, `js/streak.js`, `js/store.js` nach den Regeln in SPEC.md; `tests/streak.test.mjs` mit Randfällen (heute offen, Freeze, zwei verpasste Tage, Wochengrenze, Jahreswechsel, Import ungültig). Prüfen: `node --test`.
