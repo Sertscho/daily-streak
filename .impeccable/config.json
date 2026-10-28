@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "dark-glow",
+        "value": "*",
+        "files": [
+          "drafts/level-entwuerfe.html"
+        ],
+        "createdAt": "2026-10-28T10:36:12.172Z",
+        "reason": "Claude: Leuchten ist hier das Motiv (Feuer-Aura, vom Nutzer gewünschter Solo-Leveling-System-Look)"
+      }
+    ]
+  }
+}

@@ -14,3 +14,4 @@
 - `tests/` — node --test
 - `tools/make_icons.py` — erzeugt `icons/*.png` (nur Standardbibliothek)
 - `docs/` — SPEC, PLAN
+- `drafts/` — Design-Entwürfe (nicht Teil der App, nicht im SW-Cache)

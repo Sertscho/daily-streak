@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level-Entwürfe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #14110F; --surface: #211B17; --surface-2: #2D2520; --line: #3A302A;
+  --text: #FFF4E6; --muted: #B5A595; --amber: #FFB547;
+  --sys: #7cc4ff; --sys-deep: #0b1a2b;
+  --tier-a: #ff7a1a; --tier-b: #ffb547;
+  --ui: ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+  --system: "Chakra Petch", ui-rounded, system-ui, sans-serif;
+  --out: cubic-bezier(.16, 1, .3, 1);
+}
+* { box-sizing: border-box; margin: 0; }
+html { background: var(--bg); color: var(--text); font-family: var(--ui); color-scheme: dark; }
+::selection { background: var(--amber); color: #2A1600; }
+body { min-height: 100dvh; padding: 32px 16px 64px; }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+
+.top { max-width: 1180px; margin: 0 auto 28px; display: grid; gap: 16px; }
+.top h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.01em; }
+.top p { color: var(--muted); max-width: 62ch; line-height: 1.5; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px 18px; }
+.controls label { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 12ch; }
+.controls input[type=range] { flex: 1 1 260px; accent-color: var(--amber); }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 600 13px var(--ui); color: var(--text); background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; cursor: pointer; }
+.chip:hover { border-color: var(--muted); }
+.go { font: 700 15px var(--ui); background: var(--amber); color: #2A1600; border: 0; border-radius: 14px; padding: 12px 18px; cursor: pointer; transition: transform .2s var(--out); }
+.go:active { transform: scale(.96); }
+
+.grid { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px; }
+.variant h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+.variant > p { color: var(--muted); line-height: 1.5; margin-bottom: 14px; min-height: 3em; }
+
+.phone { position: relative; width: 100%; max-width: 360px; aspect-ratio: 9 / 18.5; margin: 0 auto; border-radius: 40px; background: var(--bg); border: 1px solid var(--line); overflow: hidden; isolation: isolate; }
+.phone .scr { position: absolute; inset: 0; padding: 22px 18px 18px; display: flex; flex-direction: column; }
+.phone canvas.fire { position: absolute; left: 0; right: 0; top: 40px; width: 100%; height: 56%; z-index: -1; }
+.phone .flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 5; }
+.phone.burst .flash { animation: flash .6s var(--out); }
+@keyframes flash { 0% { opacity: .85 } 100% { opacity: 0 } }
+.spacer { flex: 1; }
+.app-head { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-weight: 700; font-size: 14px; }
+
+/* System window – the Solo-Leveling voice */
+.sys { font-family: var(--system); color: #e6f4ff; background: linear-gradient(180deg, rgba(14,36,60,.92), rgba(8,20,36,.92)); border: 1px solid rgba(124,196,255,.55); border-radius: 4px; box-shadow: 0 10px 30px -10px rgba(40,140,255,.55), inset 0 0 0 1px rgba(124,196,255,.12); padding: 12px 14px; }
+.sys .t { font-weight: 700; font-size: 12px; letter-spacing: .14em; color: var(--sys); }
+.sys .big { font-weight: 700; font-size: 22px; letter-spacing: .04em; margin-top: 2px; }
+.popup { position: absolute; left: 18px; right: 18px; top: 34%; z-index: 6; text-align: center; clip-path: inset(50% 0 50% 0); opacity: 0; pointer-events: none; }
+.phone.burst .popup { animation: popup 2.6s var(--out) forwards; }
+@keyframes popup {
+  0% { clip-path: inset(50% 0 50% 0); opacity: 1 }
+  14% { clip-path: inset(0 0 0 0); opacity: 1 }
+  80% { clip-path: inset(0 0 0 0); opacity: 1 }
+  100% { clip-path: inset(0 0 0 0); opacity: 0 }
+}
+
+.bar { height: 6px; border-radius: 3px; background: rgba(255,244,230,.1); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--tier-a), var(--tier-b)); transition: width .8s var(--out); }
+
+/* A: Rang */
+.rank { display: flex; align-items: flex-end; gap: 14px; }
+.rank .letter { font-family: var(--system); font-weight: 700; font-size: 88px; line-height: .8; color: var(--tier-b); text-shadow: 0 6px 30px var(--tier-a); transition: color .6s; }
+.rank .meta { padding-bottom: 6px; }
+.rank .meta b { display: block; font-family: var(--system); font-size: 18px; letter-spacing: .08em; }
+.rank .meta span { color: var(--muted); font-size: 13px; }
+.titles { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.title { font-family: var(--system); font-size: 11px; font-weight: 600; letter-spacing: .06em; padding: 5px 8px; border-radius: 3px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.title.on { border-color: rgba(124,196,255,.6); color: #e6f4ff; background: rgba(20,60,100,.45); }
+
+/* B: Evolution */
+.form-name { text-align: center; }
+.form-name b { display: block; font-size: 30px; font-weight: 800; letter-spacing: -0.01em; color: var(--tier-b); transition: color .6s; }
+.form-name span { color: var(--muted); font-size: 13px; }
+.seals { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 14px; }
+.seal { aspect-ratio: 1; display: grid; place-items: center; position: relative; color: var(--muted); }
+.seal svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.seal svg path { fill: var(--surface); stroke: var(--line); stroke-width: 3; transition: fill .5s, stroke .5s; }
+.seal em { position: relative; font-style: normal; font-family: var(--system); font-weight: 700; font-size: 15px; line-height: 1; text-align: center; }
+.seal em small { display: block; font-size: 8px; letter-spacing: .1em; margin-top: 2px; }
+.seal.on { color: #2A1600; }
+.seal.on svg path { fill: var(--tier-b); stroke: var(--tier-a); }
+
+/* C: Quest */
+.lv { text-align: center; font-family: var(--system); }
+.lv small { display: block; color: var(--sys); letter-spacing: .3em; font-size: 13px; font-weight: 600; }
+.lv b { font-size: 76px; line-height: .9; font-weight: 700; color: #f3f9ff; text-shadow: 0 0 24px var(--tier-a), 0 4px 40px var(--tier-b); }
+.quest .row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 5px 0; }
+.quest .row svg { width: 16px; height: 16px; stroke: var(--sys); fill: none; stroke-width: 2.5; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; text-align: center; }
+.stats div { font-size: 11px; letter-spacing: .08em; color: var(--sys); }
+.stats b { display: block; font-size: 20px; color: #f3f9ff; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+
+.legend { max-width: 1180px; margin: 36px auto 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+@media (prefers-reduced-motion: reduce) {
+  .phone.burst .flash { animation: none; }
+  .phone.burst .popup { animation-duration: .01ms; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Daily Streak · Level-Entwürfe</h1>
+  <p>Zieh am Regler oder tippe auf eine Etappe. Mit „Level-Up abspielen“ siehst du, wie ein Aufstieg in jedem Entwurf aussieht. Das Feuer, die Farben und die Blitze reagieren live.</p>
+  <div class="controls">
+    <label for="days" id="dayslabel">0 Tage</label>
+    <input type="range" id="days" min="0" max="400" value="0" step="1">
+    <div class="presets">
+      <button class="chip" data-d="1">1 Tag</button>
+      <button class="chip" data-d="7">1 Woche</button>
+      <button class="chip" data-d="30">1 Monat</button>
+      <button class="chip" data-d="90">3 Monate</button>
+      <button class="chip" data-d="180">6 Monate</button>
+      <button class="chip" data-d="365">1 Jahr</button>
+    </div>
+    <button class="go" id="levelup">Level-Up abspielen</button>
+  </div>
+</header>
+
+<main class="grid">
+  <section class="variant" id="vA">
+    <h2>A · Jäger-Rang</h2>
+    <p>Sechs Ränge von E bis S. Jeder Rang färbt das Feuer neu, ab Rang B schlagen Blitze ein. Erreichte Ränge bringen Titel.</p>
+    <div class="phone"><canvas class="fire"></canvas><div class="flash"></div>
+      <div class="popup sys"><div class="t">[ SYSTEM ]</div><div class="big" data-pop></div></div>
+      <div class="scr">
+        <div class="app-head"><span>Daily Streak</span><span data-days></span></div>
+        <div class="spacer"></div>
+        <div class="rank"><div class="letter" data-letter>E</div><div class="meta"><b data-rname></b><span data-next></span></div></div>
+        <div class="bar" style="margin-top:12px"><i data-bar></i></div>
+        <div class="titles" data-titles></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="variant" id="vB">
+    <h2>B · Evolution</h2>
+    <p>Das Feuer verwandelt sich: Glut, Flamme, Lohe, Blaufeuer, Plasma, Sturmfeuer, Phönix. Die Meilensteine sind Siegel, die aufleuchten.</p>
+    <div class="phone"><canvas class="fire"></canvas><div class="flash"></div>
+      <div class="popup sys"><div class="t">[ EVOLUTION ]</div><div class="big" data-pop></div></div>
+      <div class="scr">
+        <div class="app-head"><span>Daily Streak</span><span data-days></span></div>
+        <div class="spacer"></div>
+        <div class="form-name"><b data-fname></b><span data-next></span></div>
+        <div class="bar" style="margin-top:12px"><i data-bar></i></div>
+        <div class="seals" data-seals></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="variant" id="vC">
+    <h2>C · Tägliche Quest</h2>
+    <p>Am stärksten im Solo-Leveling-Stil: Das Ritual ist die tägliche Quest, jeder Abend bringt Erfahrungspunkte (XP) und Statuswerte, und das Feuer wird zur Aura um dein Level.</p>
+    <div class="phone"><canvas class="fire"></canvas><div class="flash"></div>
+      <div class="popup sys"><div class="t">[ SYSTEM ]</div><div class="big" data-pop></div></div>
+      <div class="scr">
+        <div class="app-head"><span>Daily Streak</span><span data-days></span></div>
+        <div class="spacer"></div>
+        <div class="lv"><small>LEVEL</small><b data-lv>1</b></div>
+        <div class="bar" style="margin:10px 0 12px"><i data-bar></i></div>
+        <div class="sys quest">
+          <div class="t">[ TÄGLICHE QUEST ]</div>
+          <div class="row"><span>3 Gains von heute</span><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7"/></svg></div>
+          <div class="row"><span>3 Ziele für morgen</span><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7"/></svg></div>
+          <div class="row"><span>Belohnung</span><span data-xp>+30 XP</span></div>
+          <div class="stats"><div><b data-s0>0</b>FOKUS</div><div><b data-s1>0</b>DISZIPLIN</div><div><b data-s2>0</b>DANKBARKEIT</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<p class="legend">Alle drei Entwürfe teilen dieselben Meilensteine (1 Woche, 1 Monat, 3 Monate, 6 Monate, 1 Jahr) und dasselbe neue Feuer. Das ist ein Partikelfeuer mit Lichtmischung, es ändert Farbe, Größe und Funkenflug und bekommt ab drei Monaten Blitze. Kombinieren geht auch, zum Beispiel Ränge aus A mit den Siegeln aus B.</p>
+
+<script>
+// Gemeinsame Etappen: Tage → Farben/Größe/Blitze
+const TIERS = [
+  { d: 0,   rank: 'E', rname: 'Erwacht',   form: 'Glut',        c: ['#e8432e', '#ff7a1a', '#ffb547'], size: .45, bolts: 0, boltC: '#ffd27a' },
+  { d: 3,   rank: 'E', rname: 'Erwacht',   form: 'Flamme',      c: ['#e8432e', '#ff7a1a', '#ffd27a'], size: .6,  bolts: 0, boltC: '#ffd27a' },
+  { d: 7,   rank: 'D', rname: 'Beständig', form: 'Lohe',        c: ['#ff6a00', '#ffb547', '#fff1c9'], size: .75, bolts: 0, boltC: '#ffd27a' },
+  { d: 30,  rank: 'C', rname: 'Glühend',   form: 'Blaufeuer',   c: ['#1e6bff', '#38bdf8', '#e0f7ff'], size: .85, bolts: 0, boltC: '#bfe9ff' },
+  { d: 90,  rank: 'B', rname: 'Arkan',     form: 'Plasma',      c: ['#7c3aed', '#c084fc', '#fae8ff'], size: .95, bolts: 1, boltC: '#e9d5ff' },
+  { d: 180, rank: 'A', rname: 'Sturm',     form: 'Sturmfeuer',  c: ['#0ea5e9', '#67e8f9', '#ffffff'], size: 1.05, bolts: 2, boltC: '#a5f3fc' },
+  { d: 365, rank: 'S', rname: 'Monarch',   form: 'Phönix',      c: ['#f59e0b', '#fde68a', '#ffffff'], size: 1.15, bolts: 4, boltC: '#fff7d6' },
+];
+const RANKS = TIERS.filter((t, i, a) => i === a.findIndex(x => x.rank === t.rank));
+const MILESTONES = [[7, '1 W'], [30, '1 M'], [90, '3 M'], [180, '6 M'], [365, '1 J']];
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const tierFor = d => TIERS.filter(t => d >= t.d).at(-1);
+const nextOf = (list, d) => list.find(t => t.d > d);
+const levelFor = d => Math.floor(1 + Math.sqrt(d * 3));
+
+// Partikelfeuer + Blitze, eine Instanz pro Handy
+function Fire(canvas) {
+  const ctx = canvas.getContext('2d');
+  let W = 0, H = 0, parts = [], bolts = [], tier = TIERS[0], boost = 0;
+  const fit = () => { const r = devicePixelRatio || 1; W = canvas.clientWidth; H = canvas.clientHeight; canvas.width = W * r; canvas.height = H * r; ctx.setTransform(r, 0, 0, r, 0, 0); };
+  new ResizeObserver(fit).observe(canvas); fit();
+  const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+  let sprites = [];
+  function buildSprites() { // 16 vorgerenderte Farbstufen statt Verlauf pro Partikel
+    const [o, m, core] = tier.c.map(hex);
+    sprites = Array.from({ length: 16 }, (_, i) => {
+      const life = i / 15, [r, g, b] = life < .5 ? mix(core, m, life * 2) : mix(m, o, (life - .5) * 2);
+      const c = document.createElement('canvas'); c.width = c.height = 64;
+      const x = c.getContext('2d'), gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+      gr.addColorStop(0, `rgba(${r},${g},${b},1)`); gr.addColorStop(.4, `rgba(${r},${g},${b},.45)`); gr.addColorStop(1, `rgba(${r},${g},${b},0)`);
+      x.fillStyle = gr; x.fillRect(0, 0, 64, 64); return c;
+    });
+  }
+  buildSprites();
+  function spawn() {
+    const s = tier.size * (1 + boost * .3), base = H * .82;
+    parts.push({ x: W / 2 + (Math.random() - .5) * W * .17 * s, y: base, vx: 0, vy: -(2.2 + Math.random() * 2.6) * s, r: (18 + Math.random() * 14) * s, life: 0, ttl: 45 + Math.random() * 35 });
+  }
+  function bolt() { // Mittelpunktverschiebung: gezackte Linie von oben in die Flamme
+    let pts = [[W / 2 + (Math.random() - .5) * W * .9, -10], [W / 2 + (Math.random() - .5) * 40, H * .62]];
+    for (let k = 0, off = W * .18; k < 5; k++, off /= 2) {
+      const n = [pts[0]];
+      for (let i = 1; i < pts.length; i++) { const [a, b] = [pts[i - 1], pts[i]]; n.push([(a[0] + b[0]) / 2 + (Math.random() - .5) * off, (a[1] + b[1]) / 2], b); }
+      pts = n;
+    }
+    bolts.push({ pts, life: 12 });
+  }
+  function step() { // ein fester 60-Hz-Schritt
+    const rate = Math.round(3 + 2 * tier.size + boost * 3);
+    for (let i = 0; i < rate; i++) spawn();
+    parts = parts.filter(p => p.life < p.ttl);
+    for (const p of parts) {
+      p.life++;
+      p.x += (W / 2 - p.x) * .035 + Math.sin((p.y + p.life * 3) * .045) * .9; p.y += p.vy; // zieht zur Mitte: Flammenspitze
+    }
+    if (!reduce && Math.random() < tier.bolts * .012 + boost * .15) bolt();
+    bolts = bolts.filter(b => b.life-- > 0);
+    boost = Math.max(0, boost - .012);
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+    const glow = ctx.createRadialGradient(W / 2, H * .7, 0, W / 2, H * .7, W * .55 * tier.size * (1 + boost * .5));
+    glow.addColorStop(0, `rgba(${hex(tier.c[1])},${.28 + boost * .3})`); glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+    for (const p of parts) {
+      const t = p.life / p.ttl, r = p.r * (1 - t * .85);
+      ctx.globalAlpha = .22 * (1 - t) * Math.min(1, p.life / 6);
+      ctx.drawImage(sprites[Math.min(15, t * 16 | 0)], p.x - r, p.y - r, r * 2, r * 2);
+    }
+    for (const b of bolts) {
+      ctx.strokeStyle = tier.boltC; ctx.shadowColor = tier.boltC; ctx.shadowBlur = 18;
+      ctx.globalAlpha = b.life / 12; ctx.lineWidth = 1 + b.life / 5;
+      ctx.beginPath(); b.pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.stroke();
+    }
+    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+  }
+  let lastT = 0, warm = true;
+  function frame(now) {
+    // zeitbasiert: gleich schnell auf 60 und 120 Hz; bei Ruckeln max. 1 s nachholen
+    let n = lastT ? Math.min(60, Math.round((now - lastT) / 16.7)) : 1;
+    if (warm) { n = 70; warm = false; } else if (reduce) n = 0;
+    lastT = now;
+    for (let i = 0; i < n; i++) step();
+    if (n || !reduce) draw();
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  return { set(t) { if (t !== tier) { tier = t; buildSprites(); if (reduce) { parts = []; warm = true; } } }, burst() { boost = 1; if (!reduce) for (let i = 0; i < 3; i++) bolt(); } };
+}
+
+const variants = ['vA', 'vB', 'vC'].map(id => {
+  const root = document.getElementById(id);
+  return { id, root, fire: Fire(root.querySelector('canvas')), q: s => root.querySelector(s) };
+});
+const sealSVG = '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 4l40 23v46L50 96 10 73V27z"/></svg>';
+
+function render(d) {
+  document.getElementById('dayslabel').textContent = `${d} ${d === 1 ? 'Tag' : 'Tage'}`;
+  const t = tierFor(d);
+  for (const v of variants) {
+    v.fire.set(t);
+    v.root.style.setProperty('--tier-a', t.c[0]); v.root.style.setProperty('--tier-b', t.c[1]);
+    v.q('[data-days]').textContent = `${d} 🔥`.replace(' 🔥', ' Tage');
+  }
+  // A
+  const [A, B, C] = variants, r = RANKS.filter(x => d >= x.d).at(-1), rn = nextOf(RANKS, d);
+  A.q('[data-letter]').textContent = r.rank;
+  A.q('[data-rname]').textContent = `Rang ${r.rank} · ${r.rname}`;
+  A.q('[data-next]').textContent = rn ? `Noch ${rn.d - d} Tage bis Rang ${rn.rank}` : 'Höchster Rang erreicht';
+  A.q('[data-bar]').style.width = rn ? `${(d - r.d) / (rn.d - r.d) * 100}%` : '100%';
+  A.q('[data-titles]').innerHTML = RANKS.slice(1).map(x => `<span class="title ${d >= x.d ? 'on' : ''}">${x.rname}</span>`).join('');
+  // B
+  const fn = nextOf(TIERS, d);
+  B.q('[data-fname]').textContent = t.form;
+  B.q('[data-next]').textContent = fn ? `Nächste Form: ${fn.form} in ${fn.d - d} Tagen` : 'Endform erreicht';
+  B.q('[data-bar]').style.width = fn ? `${(d - t.d) / (fn.d - t.d) * 100}%` : '100%';
+  B.q('[data-seals]').innerHTML = MILESTONES.map(([m, l]) => `<div class="seal ${d >= m ? 'on' : ''}" title="${m} Tage">${sealSVG}<em>${m}<small>${l.split(' ')[1] === 'W' ? 'WOCHE' : l.split(' ')[1] === 'M' ? (m === 30 ? 'MONAT' : 'MONATE') : 'JAHR'}</small></em></div>`).join('');
+  // C
+  const lv = levelFor(d), cur = (lv - 1) ** 2 / 3, nxt = lv ** 2 / 3;
+  C.q('[data-lv]').textContent = lv;
+  C.q('[data-bar]').style.width = `${Math.min(100, (d - cur) / (nxt - cur) * 100)}%`;
+  C.q('[data-xp]').textContent = `+${30 + Math.min(d, 100)} XP`;
+  ['s0', 's1', 's2'].forEach((s, i) => C.q(`[data-${s}]`).textContent = Math.round(d * [1.2, 1.5, 0.9][i]));
+}
+
+const range = document.getElementById('days');
+let last = 0;
+function setDays(d) {
+  const before = tierFor(last), after = tierFor(d), lvUp = levelFor(d) > levelFor(last);
+  range.value = d; render(d);
+  if (d > last && (after !== before || lvUp)) play(d, before);
+  last = d;
+}
+function play(d, before) {
+  const t = tierFor(d), [A, B, C] = variants;
+  A.q('[data-pop]').textContent = t.rank !== before?.rank ? `RANG-AUFSTIEG  ${before.rank} → ${t.rank}` : `RANG ${t.rank} · ${t.rname.toUpperCase()}`;
+  B.q('[data-pop]').textContent = `${t.form.toUpperCase()} ERWACHT`;
+  C.q('[data-pop]').textContent = `LEVEL UP  ·  LV. ${levelFor(d)}`;
+  for (const v of variants) {
+    const ph = v.root.querySelector('.phone');
+    ph.classList.remove('burst'); void ph.offsetWidth; ph.classList.add('burst');
+    v.fire.burst();
+  }
+}
+range.addEventListener('input', () => { render(+range.value); });
+range.addEventListener('change', () => setDays(+range.value));
+document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => setDays(+b.dataset.d)));
+document.getElementById('levelup').addEventListener('click', () => {
+  const d = +range.value, nt = nextOf(TIERS, d);
+  if (nt) { last = d; setDays(nt.d); } else play(d, tierFor(d));
+});
+render(0);
+</script>
+</body>
+</html>
