@@ -12,4 +12,5 @@
 - `sw.js` — Offline-Cache
 - `manifest.webmanifest`, `icons/` — PWA-Installation
 - `tests/` — node --test
+- `tools/make_icons.py` — erzeugt `icons/*.png` (nur Standardbibliothek)
 - `docs/` — SPEC, PLAN
