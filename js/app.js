@@ -1,7 +1,7 @@
 import { render as renderHome } from './views/home.js';
 import { render as renderReview } from './views/review.js';
 import { open as openRitualSheet } from './views/ritual.js';
-import { open as openSettingsSheet } from './views/settings.js';
+import { open as openSettingsSheet, checkReminder } from './views/settings.js';
 
 const DEFAULT_ROUTE = '/feuer';
 const routes = {
@@ -39,6 +39,9 @@ function rerender() {
 
 window.addEventListener('hashchange', rerender);
 rerender();
+checkReminder();
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkReminder(); });
+setInterval(checkReminder, 60_000);
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js')

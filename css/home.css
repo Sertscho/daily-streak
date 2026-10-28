@@ -1,1 +1,75 @@
-/* Styles für den Feuer-Screen (js/views/home.js). Platzhalter, noch leer. */
+/* Feuer-Screen (js/views/home.js) und Flamme (.flame, auch vom Ritual genutzt). Datei wird global geladen. */
+
+/* ---- Flamme ---- */
+.flame { display: block; width: 100%; height: auto; overflow: visible; transition: transform .8s var(--ease-spring); }
+.flame__fire { transform-origin: 100px 210px; transition: transform .8s var(--ease-spring); }
+.flame--funke .flame__fire { transform: scale(.4); }
+.flame--flamme .flame__fire { transform: scale(.65); }
+.flame--feuer .flame__fire { transform: scale(.9); }
+.flame--lagerfeuer .flame__fire { transform: scale(1.05); }
+
+.flame .flame__tongue {
+  transform-origin: 100px 210px;
+  animation: flicker 1.3s ease-in-out infinite;
+}
+.flame .flame__glow { animation: glow-pulse 4s ease-in-out infinite; }
+.flame .flame__coal { animation: glow-pulse 3s ease-in-out infinite; }
+.flame .flame__spark { opacity: 0; animation: spark 3s ease-out infinite; }
+
+@keyframes flicker {
+  0%, 100% { transform: scaleY(1) rotate(0) skewX(0); }
+  30% { transform: scaleY(1.08) rotate(2deg) skewX(-2deg); }
+  60% { transform: scaleY(.96) rotate(-2deg) skewX(2deg); }
+}
+@keyframes glow-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+@keyframes spark {
+  0% { transform: translate(0, 0); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(var(--dx), -140px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flame, .flame .flame__fire { transition: none; }
+  .flame .flame__tongue, .flame .flame__glow, .flame .flame__coal { animation: none; }
+  .flame .flame__spark { animation: none; opacity: 0; }
+}
+
+/* ---- Feuer-Screen ---- */
+.home { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.home > * { width: 100%; opacity: 0; transform: translateY(8px); animation: home-in .4s ease-out forwards; animation-delay: calc(var(--i, 0) * 60ms); }
+@keyframes home-in { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .home > * { transform: none; animation-duration: .01s; animation-delay: 0s; }
+}
+
+.home-head { display: flex; align-items: center; justify-content: space-between; }
+.home-title { font-size: 15px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+.icon-btn {
+  width: 44px; height: 44px; border-radius: 50%; border: 0;
+  display: grid; place-items: center;
+  background: var(--surface); color: var(--muted); cursor: pointer;
+}
+.icon-btn svg { width: 22px; height: 22px; }
+
+.home-flame { max-width: 240px; }
+.home-count { text-align: center; }
+.home-num { font-size: 72px; line-height: 1; font-weight: 800; color: var(--amber); font-variant-numeric: tabular-nums; }
+.home-count .muted { margin-top: 4px; }
+
+.freeze-chip {
+  align-self: center; width: auto !important;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 999px; font-size: 13px; color: var(--text);
+  background: rgba(143, 211, 255, .1); border: 1px solid rgba(143, 211, 255, .3);
+}
+.freeze-chip svg { width: 16px; height: 16px; color: var(--ice); }
+
+.home-hint { text-align: center; font-size: 14px; }
+
+.home .card h2 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+.home .card h3 { font-size: 14px; font-weight: 700; color: var(--muted); margin: 16px 0 8px; }
+.home .card ul, .home .card ol { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.home .card li { display: flex; gap: 10px; }
+.home .card li .mark { flex: none; width: 1.2em; color: var(--amber); font-weight: 700; font-variant-numeric: tabular-nums; }
+.home .card li.done span:last-child { text-decoration: line-through; color: var(--muted); }
+.home .card .btn { margin-top: 16px; width: 100%; }
