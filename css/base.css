@@ -167,3 +167,10 @@ body {
     transition-duration: .01ms !important;
   }
 }
+
+/* Feuer-Intro beim Öffnen (js/app.js) */
+.intro { position: fixed; inset: 0; z-index: 100; overflow: hidden; display: grid; place-items: center; background: var(--bg); transition: opacity .45s ease; cursor: pointer; }
+.intro canvas { width: min(100%, 420px); height: 290px; display: block; animation: intro-in .7s var(--ease-spring) forwards;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 85%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 85%, transparent); }
+.intro.is-out { opacity: 0; pointer-events: none; }
+@keyframes intro-in { from { opacity: 0; transform: scale(.8) translateY(20%); } to { opacity: 1; transform: scale(1.8); } }

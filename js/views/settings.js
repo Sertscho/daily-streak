@@ -1,4 +1,4 @@
-import { load, save, exportJSON, importJSON } from '../store.js';
+import { load, save, exportJSON, importJSON, TIME_RE } from '../store.js';
 import { computeStreak } from '../streak.js';
 import { todayISO } from '../date.js';
 
@@ -26,8 +26,9 @@ function fold(line) {
   return out.join('\r\n');
 }
 
-export function buildICS(todayIso, nowDate = new Date()) {
+export function buildICS(todayIso, nowDate = new Date(), time = '21:00') {
   const day = todayIso.replaceAll('-', '');
+  const hhmm = time.replace(':', '');
   const stamp = nowDate.toISOString().replace(/[-:]|\.\d{3}/g, '');
   const uid = `${globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)}@daily-streak`;
   const lines = [
@@ -55,8 +56,8 @@ export function buildICS(todayIso, nowDate = new Date()) {
     'BEGIN:VEVENT',
     `UID:${uid}`,
     `DTSTAMP:${stamp}`,
-    `DTSTART;TZID=Europe/Berlin:${day}T210000`,
-    `DTEND;TZID=Europe/Berlin:${day}T211500`,
+    `DTSTART;TZID=Europe/Berlin:${day}T${hhmm}00`,
+    'DURATION:PT15M', // statt DTEND: klappt auch bei 23:50 über Mitternacht
     'RRULE:FREQ=DAILY',
     'SUMMARY:🔥 Daily Streak – 3 Gains',
     'DESCRIPTION:Schreib deine 3 Gains von heute und deine 3 Ziele für morgen auf.',
@@ -78,7 +79,8 @@ export async function checkReminder() {
     const now = new Date();
     const today = todayISO(now);
     if (!s.reminder || !('Notification' in window) || Notification.permission !== 'granted') return;
-    if (now.getHours() < 21 || s.lastNotified === today) return;
+    const hm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    if (hm < s.reminderTime || s.lastNotified === today) return;
     if (computeStreak(state.days, today).todayDone) return;
     const title = 'Dein Feuer wartet 🔥';
     const opts = { body: 'Zeit für deine 3 Gains von heute.', icon: './icons/icon-192.png' };
@@ -120,11 +122,15 @@ export function open(overlayEl, app) {
         <h3 class="settings-label">Erinnerung</h3>
         <div class="settings-group card">
           <div class="settings-row">
-            <label for="reminder-toggle">Erinnerung um 21:00</label>
+            <label for="reminder-toggle">Erinnerung</label>
             <span class="switch">
               <input type="checkbox" role="switch" id="reminder-toggle">
               <span class="switch-track" aria-hidden="true"></span>
             </span>
+          </div>
+          <div class="settings-row">
+            <label for="reminder-time">Uhrzeit</label>
+            <input type="time" id="reminder-time" class="time-input" required>
           </div>
           <p class="settings-note" id="reminder-note" aria-live="polite"></p>
           <p class="settings-hint">Auf dem iPhone funktioniert das nur, wenn Daily Streak zum Home-Bildschirm hinzugefügt ist und du die App an dem Tag geöffnet hast. Zuverlässiger ist der Kalender-Eintrag.</p>
@@ -225,8 +231,17 @@ export function open(overlayEl, app) {
     save(state);
   });
 
+  const timeInput = panel.querySelector('#reminder-time');
+  timeInput.value = load().settings.reminderTime;
+  timeInput.addEventListener('change', () => {
+    if (!TIME_RE.test(timeInput.value)) return; // leer gelassen: alte Zeit bleibt
+    const state = load();
+    state.settings.reminderTime = timeInput.value;
+    save(state);
+  });
+
   panel.querySelector('[data-action="ics"]').addEventListener('click', () => {
-    download('daily-streak-erinnerung.ics', 'text/calendar;charset=utf-8', buildICS(todayISO()));
+    download('daily-streak-erinnerung.ics', 'text/calendar;charset=utf-8', buildICS(todayISO(), new Date(), load().settings.reminderTime));
   });
 
   panel.querySelector('[data-action="export"]').addEventListener('click', () => {
@@ -245,6 +260,7 @@ export function open(overlayEl, app) {
       importJSON(text);
       say(dataNote, 'Import abgeschlossen');
       toggle.checked = load().settings.reminder;
+      timeInput.value = load().settings.reminderTime;
       app.rerender();
     } catch (err) {
       say(dataNote, err.message, true);

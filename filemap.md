@@ -6,6 +6,7 @@
 - `js/date.js` — Datumshilfen (lokale Zeit)
 - `js/streak.js` — Streak/Freeze/Feuer-Stufen, reine Logik
 - `js/store.js` — localStorage, Export/Import
+- `js/quotes.js` — Tageszitate aus Büchern, Rotation pro Kalendertag (rein, testbar)
 - `js/views/*.js` — Screens: home, ritual, review, settings
 - `js/ui/fire.js` — Partikelfeuer mit Blitzen (Canvas), Farben aus `TIERS` in streak.js
 - `fonts/` — Chakra Petch (System-/Rang-Schrift, selbst gehostet)

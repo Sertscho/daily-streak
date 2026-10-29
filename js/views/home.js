@@ -2,6 +2,7 @@ import { load, getDay } from '../store.js';
 import { computeStreak, rankInfo, stats } from '../streak.js';
 import { todayISO, addDays } from '../date.js';
 import { createFire } from '../ui/fire.js';
+import { quoteFor } from '../quotes.js';
 
 const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
@@ -19,7 +20,9 @@ export function render(el, app) {
 
   const sections = [];
   sections.push(`<header class="home-head"><span class="home-title">Daily Streak</span><button type="button" class="icon-btn" aria-label="Einstellungen" data-action="settings">${GEAR}</button></header>`);
-  sections.push(`<div class="home-fire" role="img" aria-label="Feuer, Rang ${rk.rank.rank}"><canvas></canvas></div>`);
+  const q = quoteFor(today);
+  sections.push(`<figure class="home-quote"><blockquote>„${esc(q.t)}“</blockquote><figcaption>${esc(q.a)} · ${esc(q.b)}</figcaption></figure>`);
+  sections.push(`<div class="home-fire"role="img" aria-label="Feuer, Rang ${rk.rank.rank}"><canvas></canvas></div>`);
   sections.push(`<div class="home-count"><div class="home-num">${s.current}</div><p class="muted">${s.current === 0 ? 'Zünde dein Feuer heute Abend an' : s.current === 1 ? 'Tag in Folge' : 'Tage in Folge'}</p></div>`);
   sections.push(`<span class="freeze-chip" title="Einen verpassten Abend pro Woche fängt der Freeze auf.">${SNOW}${s.freezeAvailable ? 'Freeze verfügbar' : 'Freeze diese Woche genutzt'}</span>`);
   const rankPanel = `<section class="sys rank-panel" aria-label="Dein Rang">

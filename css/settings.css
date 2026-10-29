@@ -126,3 +126,8 @@
 .switch input:checked + .switch-track { background: var(--amber); }
 .switch input:checked + .switch-track::after { transform: translateX(20px); }
 .switch input:focus-visible + .switch-track { outline: 2px solid var(--amber); outline-offset: 2px; }
+
+.time-input {
+  min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-btn);
+  background: var(--surface); color: var(--text); font: inherit; font-variant-numeric: tabular-nums; color-scheme: dark;
+}

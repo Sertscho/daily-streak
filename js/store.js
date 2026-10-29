@@ -2,6 +2,7 @@
 const KEY = 'dailyStreak.v1';
 const BAD_FILE = 'Die Datei ist kein gültiges Daily-Streak-Backup.';
 const ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
+export const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 export function defaultState() {
   return { version: 1, days: {}, settings: { reminder: false, reminderTime: '21:00', lastNotified: null } };
@@ -33,7 +34,7 @@ export function parseState(text) {
   const s = isObj(raw.settings) ? raw.settings : {};
   const settings = {
     reminder: typeof s.reminder === 'boolean' ? s.reminder : def.reminder,
-    reminderTime: typeof s.reminderTime === 'string' ? s.reminderTime : def.reminderTime,
+    reminderTime: TIME_RE.test(s.reminderTime) ? s.reminderTime : def.reminderTime,
     lastNotified: typeof s.lastNotified === 'string' ? s.lastNotified : def.lastNotified,
   };
   return { version: 1, days, settings };

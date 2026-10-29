@@ -2,6 +2,10 @@ import { render as renderHome } from './views/home.js';
 import { render as renderReview } from './views/review.js';
 import { open as openRitualSheet } from './views/ritual.js';
 import { open as openSettingsSheet, checkReminder } from './views/settings.js';
+import { createFire } from './ui/fire.js';
+import { load } from './store.js';
+import { rankInfo, stats } from './streak.js';
+import { todayISO } from './date.js';
 
 const DEFAULT_ROUTE = '/feuer';
 const routes = {
@@ -37,8 +41,24 @@ function rerender() {
   setActiveTab(route);
 }
 
+// Kurzes Feuer beim Öffnen; Antippen überspringt. Bei reduzierter Bewegung kein Intro.
+function intro() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const el = document.createElement('div');
+  el.className = 'intro';
+  el.setAttribute('aria-hidden', 'true');
+  el.innerHTML = '<canvas></canvas>';
+  document.body.append(el);
+  const { tier } = rankInfo(stats(load().days, todayISO()).activeDays);
+  createFire(el.firstChild, tier).burst();
+  const end = () => { clearTimeout(timer); el.classList.add('is-out'); setTimeout(() => el.remove(), 450); };
+  const timer = setTimeout(end, 1500);
+  el.addEventListener('click', end, { once: true });
+}
+
 window.addEventListener('hashchange', rerender);
 rerender();
+intro();
 checkReminder();
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkReminder(); });
 setInterval(checkReminder, 60_000);

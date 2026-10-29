@@ -208,3 +208,17 @@ test('store: kaputte Daten werden gesichert, nicht überschrieben', () => {
 test('store: ohne localStorage -> defaultState', () => {
   assert.deepEqual(load(), defaultState());
 });
+
+test('quotes: ein Zitat pro Tag, Rotation ohne Wiederholung', async () => {
+  const { QUOTES, quoteFor } = await import('../js/quotes.js');
+  const seen = new Set(Array.from({ length: QUOTES.length }, (_, i) => quoteFor(addDays('2026-10-01', i))));
+  assert.equal(seen.size, QUOTES.length);
+  assert.equal(quoteFor('2026-10-01'), quoteFor(addDays('2026-10-01', QUOTES.length)));
+  assert.ok(quoteFor('2020-02-29')); // vor dem Startdatum
+});
+
+test('store: reminderTime wird geprüft', () => {
+  const base = { version: 1, days: {} };
+  assert.equal(parseState(JSON.stringify({ ...base, settings: { reminderTime: '07:30' } })).settings.reminderTime, '07:30');
+  assert.equal(parseState(JSON.stringify({ ...base, settings: { reminderTime: '25:00' } })).settings.reminderTime, '21:00');
+});
