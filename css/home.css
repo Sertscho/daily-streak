@@ -4,6 +4,9 @@
 .home { display: flex; flex-direction: column; align-items: center; gap: 20px; }
 .home > * { width: 100%; opacity: 0; transform: translateY(8px); animation: home-in .4s ease-out forwards; animation-delay: calc(var(--i, 0) * 60ms); }
 @keyframes home-in { to { opacity: 1; transform: none; } }
+/* Beim Öffnen: Feuer zündet sofort, der Rest folgt, sobald die Flamme steht */
+.home.is-intro > .home-fire { animation: none; opacity: 1; transform: none; }
+.home.is-intro > :not(.home-fire) { animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1); animation-delay: calc(450ms + var(--i, 0) * 40ms); }
 @media (prefers-reduced-motion: reduce) {
   .home > * { transform: none; animation-duration: .01s; animation-delay: 0s; }
 }

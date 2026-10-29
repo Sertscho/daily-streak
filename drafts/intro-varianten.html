@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#14110F">
+<title>Intro-Varianten</title>
+<style>
+:root {
+  --bg: #14110F; --surface: #211B17; --surface-2: #2D2520; --line: #3A302A;
+  --text: #FFF4E6; --muted: #B5A595; --amber: #FFB547; --orange: #FF7A1A;
+  --ui: ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+  --out: cubic-bezier(0.23, 1, 0.32, 1); /* starkes ease-out (Emil Kowalski) */
+}
+* { box-sizing: border-box; margin: 0; }
+html { background: var(--bg); color: var(--text); font-family: var(--ui); color-scheme: dark; }
+body { min-height: 100dvh; padding: 28px 16px 64px; }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+
+.top { max-width: 1000px; margin: 0 auto 24px; display: grid; gap: 10px; }
+.top h1 { font-size: 24px; font-weight: 800; }
+.top p { color: var(--muted); line-height: 1.5; max-width: 62ch; }
+.grid { max-width: 1000px; margin: 0 auto; display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+.variant { display: grid; gap: 12px; justify-items: center; }
+.variant header { text-align: center; display: grid; gap: 4px; }
+.variant h2 { font-size: 17px; font-weight: 800; }
+.variant header p { font-size: 13px; color: var(--muted); line-height: 1.45; max-width: 34ch; }
+.variant .meta { font-size: 12px; color: var(--amber); font-variant-numeric: tabular-nums; }
+
+.phone { width: 270px; height: 540px; border-radius: 38px; padding: 10px; background: #000; border: 1px solid var(--line); }
+.screen { position: relative; height: 100%; border-radius: 30px; overflow: hidden; background: var(--bg); }
+
+.btn { min-height: 44px; padding: 0 18px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font: inherit; font-weight: 700; cursor: pointer; }
+.btn-all { justify-self: start; background: var(--amber); color: #2A1600; border: 0; }
+
+/* Nachbau des Feuer-Screens, verkleinert */
+.m-home { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px 16px; height: 100%; }
+.m-home > * { width: 100%; }
+.m-head { font-size: 11px; font-weight: 700; color: var(--muted); }
+.m-quote { text-align: center; font-size: 12.5px; line-height: 1.4; font-weight: 600; }
+.m-quote figcaption { margin-top: 4px; font-size: 10px; font-weight: 400; color: var(--muted); }
+.m-fire { position: relative; height: 200px; margin: -6px 0 -24px; }
+.m-fire canvas { width: 100%; height: 100%; display: block; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 88%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 88%, transparent); }
+.m-num { text-align: center; font-size: 52px; line-height: 1; font-weight: 800; color: var(--amber); }
+.m-sub { text-align: center; font-size: 12px; color: var(--muted); }
+.m-btn { margin-top: auto; min-height: 42px; display: grid; place-items: center; border-radius: 12px; background: var(--amber); color: #2A1600; font-size: 13px; font-weight: 700; }
+
+/* ---------- 1 · Glut: Logo glimmt auf, dann ist die App da ---------- */
+.splash { position: absolute; inset: 0; display: grid; place-items: center; background: var(--bg); z-index: 2; pointer-events: none; }
+.splash svg { width: 64px; height: 64px; grid-area: 1 / 1; }
+.splash .glow { grid-area: 1 / 1; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 122, 26, .35), transparent); }
+.run[data-v="1"] .splash svg { animation: in-soft 450ms var(--out) both; }
+.run[data-v="1"] .splash .glow { animation: glow 700ms var(--out) both; }
+.run[data-v="1"] .splash { animation: fade-out 300ms var(--out) 600ms forwards; }
+.run[data-v="1"] .m-home > * { animation: rise 400ms var(--out) both; animation-delay: calc(600ms + var(--i) * 35ms); }
+
+/* ---------- 2 · Zünden: Funke, Flamme wächst an Ort und Stelle ---------- */
+.run[data-v="2"] .m-home > :not(.m-fire) { animation: rise 400ms var(--out) both; animation-delay: calc(450ms + var(--i) * 40ms); }
+
+/* ---------- 3 · Aufglimmen: Feuer und Inhalt blenden sanft ein ---------- */
+.run[data-v="3"] .m-fire { animation: fire-in 600ms var(--out) both; }
+.run[data-v="3"] .m-fire::after { content: ""; position: absolute; inset: 10% 15% 0; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 181, 71, .3), transparent); opacity: 0; animation: glow 800ms var(--out) 100ms; pointer-events: none; }
+.run[data-v="3"] .m-home > :not(.m-fire) { animation: rise 350ms var(--out) both; animation-delay: calc(120ms + var(--i) * 30ms); }
+
+@keyframes in-soft { from { opacity: 0; transform: scale(.94); } }
+@keyframes glow { 0% { opacity: 0; } 40% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes fade-out { to { opacity: 0; visibility: hidden; } }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+@keyframes fire-in { from { opacity: 0; transform: translateY(10px) scale(.96); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .run .splash { display: none; }
+  .run * { animation: none !important; }
+}
+</style>
+</head>
+<body>
+  <div class="top">
+    <h1>Start-Animation: drei ruhige Varianten</h1>
+    <p>Alle drei dauern unter einer Sekunde, laufen nur über Transparenz und Bewegung und entfallen bei „Bewegung reduzieren“. Du öffnest die App jeden Tag, deshalb ist es bewusst leiser als vorher.</p>
+    <button class="btn btn-all" type="button" data-all>Alle abspielen</button>
+  </div>
+
+  <div class="grid">
+    <section class="variant">
+      <header><h2>1 · Glut</h2><p>Dein App-Logo glimmt kurz auf, mit einem warmen Schein dahinter. Dann blendet es zur App über.</p><span class="meta">ca. 0,9 s · eigener Startbildschirm</span></header>
+      <div class="phone"><div class="screen" data-v="1"></div></div>
+      <button class="btn" type="button" data-play="1">Nochmal abspielen</button>
+    </section>
+    <section class="variant">
+      <header><h2>2 · Zünden</h2><p>Die Feuerzeug-Idee, aber leise: ein paar Funken, die Flamme geht genau dort an, wo sie hingehört. Kein Blitz, kein Vollbild.</p><span class="meta">ca. 0,9 s · direkt im Feuer-Screen</span></header>
+      <div class="phone"><div class="screen" data-v="2"></div></div>
+      <button class="btn" type="button" data-play="2">Nochmal abspielen</button>
+    </section>
+    <section class="variant">
+      <header><h2>3 · Aufglimmen</h2><p>Am dezentesten: Das Feuer steigt sanft auf und glimmt einmal hell, der Rest folgt kurz danach.</p><span class="meta">ca. 0,6 s · direkt im Feuer-Screen</span></header>
+      <div class="phone"><div class="screen" data-v="3"></div></div>
+      <button class="btn" type="button" data-play="3">Nochmal abspielen</button>
+    </section>
+  </div>
+
+<script type="module">
+import { createFire } from '../js/ui/fire.js';
+import { TIERS } from '../js/streak.js';
+
+const LOGO = '<svg viewBox="0 0 512 512" aria-hidden="true"><path d="M256 56L358.2 284.2A112 112 0 1 1 153.8 284.2Z" fill="#FF7A1A"/><path d="M256 236L305 325A56 56 0 1 1 207 325Z" fill="#FFB547"/></svg>';
+const HOME = ['<div class="m-head">Daily Streak</div>',
+  '<figure class="m-quote">„Verpasse nie zweimal.“<figcaption>James Clear · Atomic Habits</figcaption></figure>',
+  '<div class="m-fire"><canvas></canvas></div>', '<div class="m-num">12</div>',
+  '<p class="m-sub">Tage in Folge</p>', '<div class="m-btn">Abend-Ritual starten</div>']
+  .map((h, i) => h.replace(/^<(\w+)/, `<$1 style="--i:${i}"`)).join('');
+
+function play(screen) {
+  const v = screen.dataset.v;
+  screen.classList.remove('run');
+  screen.innerHTML = `<div class="m-home">${HOME}</div>` + (v === '1' ? `<div class="splash"><div class="glow"></div>${LOGO}</div>` : '');
+  createFire(screen.querySelector('canvas'), TIERS[1], { ignite: v === '2' });
+  void screen.offsetWidth; // Animation neu starten
+  screen.classList.add('run');
+}
+
+const screens = [...document.querySelectorAll('.screen')];
+screens.forEach(play);
+document.querySelectorAll('[data-play]').forEach((b) => b.addEventListener('click', () => play(screens[b.dataset.play - 1])));
+document.querySelector('[data-all]').addEventListener('click', () => screens.forEach(play));
+</script>
+</body>
+</html>

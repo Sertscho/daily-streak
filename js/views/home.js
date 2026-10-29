@@ -49,8 +49,9 @@ export function render(el, app) {
       + '<button type="button" class="btn btn-ghost" data-action="ritual">Bearbeiten</button></section>');
   }
 
-  el.innerHTML = `<div class="home" style="--tier-a:${rk.tier.c[0]};--tier-b:${rk.tier.c[1]}">${sections.map((h, i) => h.replace(/^<(\w+)/, `<$1 style="--i:${i}"`)).join('')}</div>`;
-  createFire(el.querySelector('.home-fire canvas'), rk.tier);
+  const intro = app.intro && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.innerHTML = `<div class="home${intro ? ' is-intro' : ''}" style="--tier-a:${rk.tier.c[0]};--tier-b:${rk.tier.c[1]}">${sections.map((h, i) => h.replace(/^<(\w+)/, `<$1 style="--i:${i}"`)).join('')}</div>`;
+  createFire(el.querySelector('.home-fire canvas'), rk.tier, { ignite: intro });
   el.querySelector('[data-action="settings"]').addEventListener('click', () => app.openSettings());
   el.querySelectorAll('[data-action="ritual"]').forEach((b) => b.addEventListener('click', () => app.openRitual()));
 }

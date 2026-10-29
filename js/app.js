@@ -2,10 +2,6 @@ import { render as renderHome } from './views/home.js';
 import { render as renderReview } from './views/review.js';
 import { open as openRitualSheet } from './views/ritual.js';
 import { open as openSettingsSheet, checkReminder } from './views/settings.js';
-import { createFire } from './ui/fire.js';
-import { load } from './store.js';
-import { rankInfo, stats } from './streak.js';
-import { todayISO } from './date.js';
 
 const DEFAULT_ROUTE = '/feuer';
 const routes = {
@@ -17,6 +13,7 @@ const viewEl = document.getElementById('view');
 const overlayEl = document.getElementById('overlay');
 
 const app = {
+  intro: true, // nur beim ersten Rendern nach dem Öffnen: Feuer zündet im Feuer-Screen
   rerender,
   openRitual() { openRitualSheet(overlayEl, app); },
   openSettings() { openSettingsSheet(overlayEl, app); },
@@ -41,25 +38,9 @@ function rerender() {
   setActiveTab(route);
 }
 
-// Kurzes Feuer beim Öffnen; Antippen überspringt. Bei reduzierter Bewegung kein Intro.
-function intro() {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const el = document.createElement('div');
-  el.className = 'intro';
-  el.setAttribute('aria-hidden', 'true');
-  el.innerHTML = '<canvas></canvas>';
-  document.body.append(el);
-  const { tier } = rankInfo(stats(load().days, todayISO()).activeDays);
-  const fire = createFire(el.firstChild, tier, { ignite: true });
-  const whoosh = setTimeout(() => fire.burst(), 1100); // sobald die Flamme voll brennt
-  const end = () => { clearTimeout(timer); clearTimeout(whoosh); el.classList.add('is-out'); setTimeout(() => el.remove(), 450); };
-  const timer = setTimeout(end, 2100);
-  el.addEventListener('click', end, { once: true });
-}
-
 window.addEventListener('hashchange', rerender);
 rerender();
-intro();
+app.intro = false;
 checkReminder();
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkReminder(); });
 setInterval(checkReminder, 60_000);
