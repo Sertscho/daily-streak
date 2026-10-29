@@ -24,7 +24,8 @@ export function render(el, app) {
   sections.push(`<figure class="home-quote"><blockquote>„${esc(q.t)}“</blockquote><figcaption>${esc(q.a)} · ${esc(q.b)}</figcaption></figure>`);
   sections.push(`<div class="home-fire"role="img" aria-label="Feuer, Rang ${rk.rank.rank}"><canvas></canvas></div>`);
   sections.push(`<div class="home-count"><div class="home-num">${s.current}</div><p class="muted">${s.current === 0 ? 'Zünde dein Feuer heute Abend an' : s.current === 1 ? 'Tag in Folge' : 'Tage in Folge'}</p></div>`);
-  sections.push(`<span class="freeze-chip" title="Einen verpassten Abend pro Woche fängt der Freeze auf.">${SNOW}${s.freezeAvailable ? 'Freeze verfügbar' : 'Freeze diese Woche genutzt'}</span>`);
+  // Nur als Hinweis, wenn gestern verpasst und vom Freeze überbrückt wurde
+  if (s.bridged.includes(addDays(today, -1))) sections.push(`<span class="freeze-chip" title="Einen verpassten Abend pro Woche fängt der Freeze auf.">${SNOW}Gestern vom Freeze gerettet</span>`);
   const rankPanel = `<section class="sys rank-panel" aria-label="Dein Rang">
     <div class="rank-top"><div class="rank-letter">${rk.rank.rank}</div>
       <div class="rank-meta"><b>Rang ${rk.rank.rank} · ${rk.rank.name}</b>

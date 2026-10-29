@@ -58,7 +58,7 @@ Lagerfeuer-Look, dunkel und warm, mobil zuerst (375 px), sichere Bereiche (`env(
 - Tab-Leiste unten, 2 Tabs mit Icon und Text, Touch-Ziele ≥ 44 px.
 
 ## Abläufe
-**Feuer-Screen**: Zahnrad oben rechts (Einstellungen) · großes Feuer (Stufe aus Streak) · Zahl + „Tage in Folge“ · Freeze-Chip (❄ „Freeze verfügbar“ / „Freeze genutzt“ für diese Woche) · Karte „Heute vorgenommen“ (gestrige Ziele, falls vorhanden) · ist heute nicht erledigt: Primär-Button „Abend-Ritual starten“; ist heute erledigt: Karte mit den 3 Gains und den Zielen für morgen, Button „Bearbeiten“.
+**Feuer-Screen**: Zahnrad oben rechts (Einstellungen) · großes Feuer (Stufe aus Streak) · Zahl + „Tage in Folge“ · Freeze-Chip (❄ nur wenn gestern verpasst und vom Freeze überbrückt wurde) · Karte „Heute vorgenommen“ (gestrige Ziele, falls vorhanden) · ist heute nicht erledigt: Primär-Button „Abend-Ritual starten“; ist heute erledigt: Karte mit den 3 Gains und den Zielen für morgen, Button „Bearbeiten“.
 
 **Abend-Ritual** (Vollbild-Overlay, oben Story-Fortschrittsbalken, ✕ schließt nach Rückfrage, falls etwas eingegeben wurde):
 1. Intro: „Zeit für deine Gains“ und ein kurzer Satz zum Gap und Gain.
