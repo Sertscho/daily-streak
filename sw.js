@@ -1,4 +1,4 @@
-const CACHE = 'daily-streak-v7';
+const CACHE = 'daily-streak-v8';
 const ASSETS = [
   './',
   './index.html',
