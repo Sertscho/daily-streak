@@ -50,9 +50,10 @@ function intro() {
   el.innerHTML = '<canvas></canvas>';
   document.body.append(el);
   const { tier } = rankInfo(stats(load().days, todayISO()).activeDays);
-  createFire(el.firstChild, tier).burst();
-  const end = () => { clearTimeout(timer); el.classList.add('is-out'); setTimeout(() => el.remove(), 450); };
-  const timer = setTimeout(end, 1500);
+  const fire = createFire(el.firstChild, tier, { ignite: true });
+  const whoosh = setTimeout(() => fire.burst(), 1100); // sobald die Flamme voll brennt
+  const end = () => { clearTimeout(timer); clearTimeout(whoosh); el.classList.add('is-out'); setTimeout(() => el.remove(), 450); };
+  const timer = setTimeout(end, 2100);
   el.addEventListener('click', end, { once: true });
 }
 

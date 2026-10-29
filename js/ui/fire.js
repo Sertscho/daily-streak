@@ -4,9 +4,12 @@ const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
 
-export function createFire(canvas, tier) {
+// ignite: startet ohne Flamme – erst Funken wie beim Feuerzeug, dann wächst das Feuer an.
+export function createFire(canvas, tier, { ignite = false } = {}) {
   const ctx = canvas.getContext('2d');
-  let W = 0, H = 0, parts = [], bolts = [], sprites = [], boost = 0, lastT = 0, warm = true;
+  let W = 0, H = 0, parts = [], bolts = [], sparks = [], sprites = [], boost = 0, lastT = 0, warm = !ignite;
+  let ig = ignite ? 0 : 60; // Schritte seit dem Zünden; 0–12 nur Funken, danach wächst die Flamme
+  const grow = () => { const t = Math.max(0, Math.min(1, (ig - 12) / 40)); return 1 - (1 - t) ** 2; };
 
   const fit = () => {
     const r = Math.min(2, devicePixelRatio || 1);
@@ -34,7 +37,7 @@ export function createFire(canvas, tier) {
   }
 
   function spawn() {
-    const s = tier.size * (1 + boost * .3);
+    const s = tier.size * (1 + boost * .3) * (.3 + .7 * grow());
     parts.push({ x: W / 2 + (Math.random() - .5) * W * .22 * s, y: H * .84, vy: -(1.8 + Math.random() * 2) * s * (H / 300),
       r: (22 + Math.random() * 16) * s * (W / 300), life: 0, ttl: 45 + Math.random() * 35 });
   }
@@ -53,7 +56,12 @@ export function createFire(canvas, tier) {
   }
 
   function step() { // ein fester 60-Hz-Schritt
-    const rate = Math.round(3 + 2 * tier.size + boost * 3);
+    if (ig < 60) ig++;
+    if (ig < 14) for (let i = 0; i < 4; i++) sparks.push({ x: W / 2 + (Math.random() - .5) * 10, y: H * .84,
+      vx: (Math.random() - .5) * 4, vy: -(2 + Math.random() * 5), life: 8 + Math.random() * 14 });
+    sparks = sparks.filter((p) => p.life-- > 0);
+    for (const p of sparks) { p.x += p.vx; p.y += p.vy; p.vy += .25; }
+    const rate = Math.round((3 + 2 * tier.size + boost * 3) * grow());
     for (let i = 0; i < rate; i++) spawn();
     parts = parts.filter((p) => p.life < p.ttl);
     for (const p of parts) {
@@ -70,7 +78,7 @@ export function createFire(canvas, tier) {
     ctx.clearRect(0, 0, W, H);
     ctx.globalCompositeOperation = 'lighter';
     const glow = ctx.createRadialGradient(W / 2, H * .72, 0, W / 2, H * .72, W * .55 * tier.size * (1 + boost * .5));
-    glow.addColorStop(0, `rgba(${hex(tier.c[1])},${.26 + boost * .3})`);
+    glow.addColorStop(0, `rgba(${hex(tier.c[1])},${(.26 + boost * .3) * grow()})`);
     glow.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
     for (const p of parts) {
@@ -83,7 +91,9 @@ export function createFire(canvas, tier) {
       ctx.globalAlpha = b.life / 12; ctx.lineWidth = 1 + b.life / 5;
       ctx.beginPath(); b.pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke();
     }
-    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+    ctx.shadowBlur = 0; ctx.fillStyle = `rgb(${hex(tier.c[2])})`;
+    for (const p of sparks) { ctx.globalAlpha = Math.min(1, p.life / 10); ctx.fillRect(p.x - 1, p.y - 1, 2.5, 2.5); }
+    ctx.globalAlpha = 1;
   }
 
   function frame(now) {
