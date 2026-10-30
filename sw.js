@@ -1,4 +1,4 @@
-const CACHE = 'daily-streak-v8';
+const CACHE = 'daily-streak-v11';
 const ASSETS = [
   './',
   './index.html',
@@ -29,7 +29,8 @@ const ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE)
-      .then((cache) => cache.addAll(ASSETS))
+      // cache: 'reload' umgeht den HTTP-Cache, sonst landen nach einem Update alte Dateien im neuen Cache
+      .then((cache) => cache.addAll(ASSETS.map((u) => new Request(u, { cache: 'reload' }))))
       .then(() => self.skipWaiting())
   );
 });

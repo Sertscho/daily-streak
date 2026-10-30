@@ -215,6 +215,8 @@ test('quotes: ein Zitat pro Tag, Rotation ohne Wiederholung', async () => {
   assert.equal(seen.size, QUOTES.length);
   assert.equal(quoteFor('2026-10-01'), quoteFor(addDays('2026-10-01', QUOTES.length)));
   assert.ok(quoteFor('2020-02-29')); // vor dem Startdatum
+  const who = (q) => q.a.split(' & ')[0];
+  QUOTES.forEach((q, i) => assert.notEqual(who(q), who(QUOTES[(i + 1) % QUOTES.length]), `gleicher Autor an Tag ${i} und ${i + 1}`));
 });
 
 test('store: reminderTime wird geprüft', () => {
