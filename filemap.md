@@ -11,9 +11,10 @@
 - `js/ui/fire.js` — Partikelfeuer mit Blitzen (Canvas), Farben aus `TIERS` in streak.js
 - `fonts/` — Chakra Petch (System-/Rang-Schrift, selbst gehostet)
 - `js/ui/confetti.js` — Konfetti
+- `js/ui/embers.js` — Abhak-Glut: Flamme im Haken + Glutfunken beim Abhaken im Ritual
 - `sw.js` — Offline-Cache
 - `manifest.webmanifest`, `icons/` — PWA-Installation
 - `tests/` — node --test
 - `tools/make_icons.py` — erzeugt `icons/*.png` (nur Standardbibliothek)
 - `docs/` — SPEC, PLAN
-- `drafts/` — Design-Entwürfe (nicht Teil der App, nicht im SW-Cache)
+- `drafts/` — Design-Entwürfe (z. B. `abhak-feuer.html`) (nicht Teil der App, nicht im SW-Cache)

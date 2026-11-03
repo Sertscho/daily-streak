@@ -73,3 +73,10 @@
 }
 @keyframes r-fade { from { opacity: 0; } to { opacity: 1; } }
 .r-done .r-nav { align-self: stretch; }
+/* Abhak-Glut (js/ui/embers.js) und Zähler-Flamme */
+.r-tick { position: relative; }
+.r-flame { position: absolute; left: 50%; bottom: 35%; width: 16px; height: 21px; margin-left: -8px; transform-origin: 50% 100%; pointer-events: none; }
+.r-flame svg, .r-tally-fire svg { display: block; width: 100%; height: 100%; }
+.r-h:has(+ .r-tally) { margin-bottom: 8px; }
+.r-tally { display: flex; align-items: center; gap: 6px; margin: 0 4px 16px; font-size: 15px; font-variant-numeric: tabular-nums; }
+.r-tally-fire { width: 14px; height: 18px; transform-origin: 50% 100%; transform: scale(.55); opacity: .35; transition: transform 320ms cubic-bezier(.16, 1, .3, 1), opacity 320ms; }

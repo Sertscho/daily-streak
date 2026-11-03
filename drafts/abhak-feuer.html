@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14110F">
+<title>Abhak-Feuer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: drei Handys nebeneinander, auf dem Handy untereinander. Farben = App-Tokens (css/base.css), bewusst nur dunkel. */
+:root {
+  --bg: #14110F; --surface: #211B17; --surface-2: #2D2520; --line: #3A302A;
+  --text: #FFF4E6; --muted: #B5A595; --amber: #FFB547; --orange: #FF7A1A; --ember: #E8432E;
+  --ui: ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+  --out: cubic-bezier(.16, 1, .3, 1);
+  --spring: cubic-bezier(.2, .9, .3, 1.2);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; margin: 0; }
+html { background: var(--bg); }
+body { min-height: 100dvh; background: var(--bg); color: var(--text); font-family: var(--ui); font-size: 15px;
+  -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+  padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+::selection { background: var(--amber); color: #2A1600; }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+
+.top { max-width: 1260px; margin: 0 auto 28px; display: grid; gap: 10px; }
+.top h1 { font-size: 26px; font-weight: 800; text-wrap: balance; }
+.top p { color: var(--muted); line-height: 1.5; max-width: 62ch; }
+.switch { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); cursor: pointer; width: fit-content; min-height: 44px; }
+.switch input { width: 20px; height: 20px; accent-color: var(--amber); }
+
+.grid { max-width: 1260px; margin: 0 auto; display: grid; gap: 36px 24px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+.variant { display: grid; gap: 14px; justify-items: center; align-content: start; }
+.variant header { text-align: center; display: grid; gap: 5px; }
+.variant h2 { font-size: 18px; font-weight: 800; }
+.variant header p { font-size: 13.5px; color: var(--muted); line-height: 1.45; max-width: 36ch; }
+.meta { font-size: 12px; color: var(--amber); font-variant-numeric: tabular-nums; }
+.controls { display: flex; gap: 8px; width: 100%; max-width: 300px; }
+.controls button { flex: 1; min-height: 44px; border-radius: 12px; border: 1px solid var(--line); background: transparent; color: var(--text); font: inherit; font-weight: 700; cursor: pointer; }
+.controls button:first-child { background: var(--amber); border-color: var(--amber); color: #2A1600; }
+.controls button:active { transform: scale(.97); }
+
+/* Handy-Rahmen mit Ritual-Screen „Was hast du davon geschafft?“ */
+.phone { width: 300px; max-width: 100%; height: 560px; border-radius: 40px; padding: 10px; background: #000; border: 1px solid var(--line); }
+.screen { position: relative; height: 100%; border-radius: 31px; background: var(--bg); overflow: hidden; display: flex; flex-direction: column; padding: 14px 14px 16px; }
+.screen canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+.bars { display: flex; gap: 4px; align-items: center; padding: 8px 4px 0; }
+.bars i { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,244,230,.15); }
+.bars i.on { background: var(--amber); }
+.bars b { width: 28px; text-align: right; font-size: 16px; color: var(--muted); font-weight: 400; }
+.h { font-size: 22px; font-weight: 800; line-height: 1.15; margin: 22px 4px 8px; text-wrap: balance; }
+.count { display: flex; align-items: center; gap: 6px; margin: 0 4px 16px; font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.count .cf { width: 14px; height: 18px; transform-origin: 50% 100%; transform: scale(.55); opacity: .35; transition: transform 320ms var(--out), opacity 320ms; }
+.count .cf svg { display: block; width: 100%; height: 100%; }
+.list { display: flex; flex-direction: column; gap: 10px; }
+
+/* Zeile = 1:1 aus css/ritual.css (.r-check / .r-tick) */
+.r-check { position: relative; display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 12px 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; font-size: 16px; cursor: pointer; }
+.r-check input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 3; }
+.r-check:has(input:focus-visible) { outline: 2px solid var(--amber); outline-offset: 2px; }
+.r-tick { position: relative; flex: none; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--line);
+  display: grid; place-items: center; color: var(--bg); transition: background 200ms, border-color 200ms; }
+.r-tick svg { opacity: 0; transition: opacity 160ms; }
+.r-check input:checked ~ .r-tick { background: var(--amber); border-color: var(--amber); }
+.r-check input:checked ~ .r-tick svg { opacity: 1; }
+.r-label { flex: 1; overflow-wrap: anywhere; transition: color 300ms; }
+.r-check input:checked ~ .r-label { color: #FFE9C7; }
+.hint { color: var(--muted); font-size: 13.5px; margin: 12px 4px 0; }
+.grow { flex: 1; }
+.fake-btn { height: 50px; border-radius: 14px; background: var(--amber); color: #2A1600; font-weight: 700; display: grid; place-items: center; font-size: 16px; }
+
+/* Gemeinsame Flamme */
+.flame { position: absolute; pointer-events: none; transform-origin: 50% 100%; z-index: 4; }
+.flame svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* A Streichholz: Haken leuchtet erst, wenn die Flamme vergeht */
+.va .r-check input:checked ~ .r-tick { transition-delay: 380ms, 380ms; }
+.va .r-check input:checked ~ .r-tick svg { transition-delay: 380ms; }
+.smoke { position: absolute; left: 50%; top: -6px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%;
+  background: rgba(181,165,149,.55); filter: blur(2px); pointer-events: none; opacity: 0; z-index: 4; }
+
+/* B Zündschnur */
+.fuse { position: absolute; left: 56px; right: 16px; bottom: 7px; height: 2px; border-radius: 1px; transform: scaleX(0); transform-origin: 0 50%;
+  background: linear-gradient(90deg, rgba(255,181,71,.25), var(--orange) 85%, #FFF1C9); pointer-events: none; z-index: 2; }
+.warm { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+  background: radial-gradient(120% 140% at 10% 50%, rgba(255,122,26,.22), transparent 60%); }
+
+/* D Durchbrennen: Flammenfront läuft durchs Feld, danach bleibt es warm getönt */
+.vd .r-check { overflow: hidden; transition: background 400ms 650ms, border-color 400ms 650ms; }
+.vd .r-check:has(input:checked) { background: #2A1F18; border-color: #4D3526; }
+.burn { position: absolute; inset: 0; transform: scaleX(0); transform-origin: 0 50%; pointer-events: none; z-index: 1;
+  background: linear-gradient(90deg, rgba(232,67,46,.05), rgba(255,122,26,.18) 75%, rgba(255,181,71,.45)); }
+.front { position: absolute; top: 0; bottom: 0; left: 0; width: 24px; margin-left: -12px; pointer-events: none; z-index: 2; }
+.front .flame { left: 0; }
+.rm .vd .r-check { transition-delay: 0ms; }
+
+/* Reduzierte Bewegung: keine Flammen, nur ruhiges Einfärben */
+.rm .va .r-check input:checked ~ .r-tick, .rm .va .r-check input:checked ~ .r-tick svg { transition-delay: 0ms; }
+
+@media (max-width: 420px) { .phone { height: 540px; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-out" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8432E"/><stop offset=".55" stop-color="#FF7A1A"/><stop offset="1" stop-color="#FFB547"/></linearGradient>
+    <linearGradient id="g-in" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB547"/><stop offset="1" stop-color="#FFF1C9"/></linearGradient>
+  </defs>
+</svg>
+
+<header class="top">
+  <h1>Abhak-Feuer</h1>
+  <p>Vier Entwürfe für den Moment, in dem du im Abend-Ritual ein Ziel abhakst. Tipp auf ein Ziel, oder lass es dir mit „Vorspielen“ zeigen. Oben zählt eine kleine Flamme mit, die mit jedem geschafften Ziel wächst.</p>
+  <label class="switch"><input type="checkbox" id="rm"> Ansicht mit reduzierter Bewegung</label>
+</header>
+
+<main class="grid" id="grid"></main>
+
+<script>
+const FLAME = '<svg viewBox="0 0 24 32" aria-hidden="true"><path fill="url(#g-out)" d="M12 1c1 6 9 10 9 19a9 9 0 0 1-18 0c0-4 2-7 4-9 0 3 1 5 3 6-1-5 0-11 2-16z"/><path fill="url(#g-in)" d="M12 14c1 3 5 5 5 10a5 5 0 0 1-10 0c0-3 2-5 3-6 0 2 1 3 2 3-1-2-1-5 0-7z"/></svg>';
+const TICK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const GOALS = ['30 Minuten lesen', '10 km laufen', 'Steuer-Unterlagen sortieren'];
+const VARIANTS = [
+  { id: 'a', name: 'A · Streichholz', meta: 'ca. 0,9 s · CSS + Web Animations',
+    text: 'Am Haken zündet eine kleine Flamme, flackert zweimal und verglimmt mit einem Rauchfaden. Erst dann leuchtet der Haken.' },
+  { id: 'b', name: 'B · Zündschnur', meta: 'ca. 1 s · CSS + Web Animations',
+    text: 'Ein Funke läuft vom Haken unter deinem Ziel entlang und pufft am Ende kurz auf. Die Glutspur kühlt danach ab.' },
+  { id: 'c', name: 'C · Glut', meta: 'ca. 1 s · Canvas wie das große Feuer',
+    text: 'Der Haken zündet, ein Dutzend Glutfunken steigen auf und kühlen von Gelb über Orange zu Rot ab.' },
+  { id: 'd', name: 'D · Durchbrennen', meta: 'ca. 1,2 s · CSS + Web Animations',
+    text: 'Eine Flammenfront brennt von links nach rechts durch das ganze Feld. Zurück bleibt eine warme Tönung.' },
+];
+const rmBox = document.getElementById('rm');
+const reduced = () => rmBox.checked || matchMedia('(prefers-reduced-motion: reduce)').matches;
+rmBox.addEventListener('change', () => document.body.classList.toggle('rm', rmBox.checked));
+
+function flame(w) {
+  const f = document.createElement('span');
+  f.className = 'flame'; f.innerHTML = FLAME;
+  f.style.width = w + 'px'; f.style.height = (w * 32 / 24) + 'px';
+  return f;
+}
+const done = (els, anims) => Promise.all(anims.map((a) => a.finished)).catch(() => {}).finally(() => els.forEach((e) => e.remove()));
+
+// A: Flamme wächst aus dem Haken, flackert, schrumpft; danach steigt Rauch auf.
+function playA(row) {
+  const tick = row.querySelector('.r-tick');
+  const f = flame(24); f.style.left = '50%'; f.style.bottom = '25%'; f.style.marginLeft = '-12px';
+  const s = document.createElement('span'); s.className = 'smoke';
+  tick.append(f, s);
+  return done([f, s], [
+    f.animate([
+      { transform: 'translateY(4px) scale(.2)', opacity: 0 },
+      { transform: 'translateY(0) scale(1.05, 1)', opacity: 1, offset: .22 },
+      { transform: 'scale(.9, 1.14)', offset: .4 },
+      { transform: 'scale(1.06, .94)', offset: .55 },
+      { transform: 'scale(.95, 1.05)', offset: .68 },
+      { transform: 'translateY(-2px) scale(.3, .45)', opacity: .7, offset: .9 },
+      { transform: 'translateY(-3px) scale(0)', opacity: 0 },
+    ], { duration: 780, easing: 'ease-in-out' }),
+    s.animate([
+      { transform: 'translateY(0) scale(.6)', opacity: 0 },
+      { opacity: .5, offset: .2 },
+      { transform: 'translate(3px, -26px) scale(1.8)', opacity: 0 },
+    ], { duration: 800, delay: 560, easing: 'ease-out', fill: 'backwards' }),
+  ]);
+}
+
+// B: Funke läuft eine Glutspur entlang, pufft am Ende auf, Spur kühlt ab.
+function playB(row) {
+  const fuse = document.createElement('span'); fuse.className = 'fuse';
+  const warm = document.createElement('span'); warm.className = 'warm';
+  const f = flame(12); f.style.left = '50px'; f.style.bottom = '6px';
+  row.append(warm, fuse, f);
+  const dist = row.clientWidth - 56 - 16;
+  const run = { duration: 560, easing: 'cubic-bezier(.45, 0, .55, 1)', fill: 'forwards' };
+  return done([fuse, warm, f], [
+    fuse.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], run),
+    fuse.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 650, delay: 600, fill: 'forwards' }),
+    f.animate([
+      { transform: 'translateX(0) scale(.5)', opacity: 0 },
+      { transform: `translateX(${dist * .15}px) scale(1)`, opacity: 1, offset: .15 },
+      { transform: `translateX(${dist * .55}px) scale(1.1, .9)`, offset: .55 },
+      { transform: `translateX(${dist}px) scale(1)`, opacity: 1 },
+    ], run),
+    f.animate([
+      { transform: `translateX(${dist}px) scale(1)`, opacity: 1 },
+      { transform: `translateX(${dist}px) translateY(-5px) scale(1.9)`, opacity: 0 },
+    ], { duration: 320, delay: 560, easing: 'ease-out', fill: 'forwards' }),
+    warm.animate([{ opacity: 0 }, { opacity: 1, offset: .35 }, { opacity: 0 }], { duration: 1000, easing: 'ease-out' }),
+  ]);
+}
+
+// C: kurze Flamme im Haken + Glutfunken auf dem Canvas des Handys.
+function playC(row, phone) {
+  const tick = row.querySelector('.r-tick');
+  const f = flame(16); f.style.left = '50%'; f.style.bottom = '35%'; f.style.marginLeft = '-8px';
+  tick.append(f);
+  const a = f.animate([
+    { transform: 'scale(.2)', opacity: 0 },
+    { transform: 'scale(1.1, 1)', opacity: 1, offset: .3 },
+    { transform: 'scale(.9, 1.1)', offset: .55 },
+    { transform: 'translateY(-2px) scale(0)', opacity: 0 },
+  ], { duration: 520, easing: 'ease-out' });
+  const sr = phone.screen.getBoundingClientRect(), tr = tick.getBoundingClientRect();
+  embers(phone, tr.left - sr.left + tr.width / 2, tr.top - sr.top + tr.height / 2);
+  return done([f], [a]);
+}
+
+function embers(phone, x, y) {
+  const cv = phone.canvas, ctx = cv.getContext('2d'), dpr = devicePixelRatio || 1;
+  if (cv.width !== cv.clientWidth * dpr) { cv.width = cv.clientWidth * dpr; cv.height = cv.clientHeight * dpr; }
+  const now = performance.now();
+  for (let i = 0; i < 12; i++) phone.parts.push({
+    x: x + (Math.random() - .5) * 10, y: y - 4, vx: (Math.random() - .5) * 1.4, vy: -(1.2 + Math.random() * 1.6),
+    r: 1.4 + Math.random() * 1.8, t0: now + Math.random() * 120, life: 700 + Math.random() * 450,
+  });
+  if (phone.raf) return;
+  const frame = (t) => {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cv.clientWidth, cv.clientHeight);
+    ctx.globalCompositeOperation = 'lighter';
+    phone.parts = phone.parts.filter((p) => t - p.t0 < p.life);
+    for (const p of phone.parts) {
+      const k = (t - p.t0) / p.life;
+      if (k < 0) continue;
+      p.vy *= .97; p.vx += (Math.random() - .5) * .12; p.x += p.vx; p.y += p.vy;
+      ctx.fillStyle = `hsla(${45 - 37 * k}, 100%, ${84 - 34 * k}%, ${1 - k * k})`;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * (1 - k * .6), 0, 7); ctx.fill();
+    }
+    phone.raf = phone.parts.length ? requestAnimationFrame(frame) : 0;
+    if (!phone.raf) ctx.clearRect(0, 0, cv.clientWidth, cv.clientHeight);
+  };
+  phone.raf = requestAnimationFrame(frame);
+}
+
+// D: Flammenfront brennt von links nach rechts durchs Feld, Glutspur kühlt ab.
+function playD(row) {
+  const burn = document.createElement('span'); burn.className = 'burn';
+  const front = document.createElement('span'); front.className = 'front';
+  const h = row.clientHeight, w = row.clientWidth;
+  // [Größe, Höhe im Feld, Versatz] – leicht versetzt, damit es wie eine Front aussieht und nicht wie ein Strich
+  [[24, .55, 0], [17, .2, -9], [19, .85, -6], [14, .4, 8], [12, .95, 5]].forEach(([size, y, x], i) => {
+    const f = flame(size); f.style.bottom = (h * (1 - y) - size * .5) + 'px'; f.style.left = x + 'px';
+    front.append(f);
+    f.animate([{ transform: 'scale(1, 1)' }, { transform: 'scale(.85, 1.2)' }, { transform: 'scale(1.1, .9)' }, { transform: 'scale(1, 1)' }],
+      { duration: 260 + i * 70, iterations: Infinity, easing: 'ease-in-out' }); // endet mit dem Entfernen der Front
+  });
+  row.append(burn, front);
+  const sweep = { duration: 820, easing: 'cubic-bezier(.4, 0, .6, 1)', fill: 'forwards' };
+  return done([burn, front], [
+    burn.animate([{ transform: 'scaleX(0)', opacity: 1 }, { transform: 'scaleX(1)', opacity: 1, offset: .8 }, { transform: 'scaleX(1)', opacity: 0 }],
+      { duration: 1250, easing: 'cubic-bezier(.4, 0, .6, 1)', fill: 'forwards' }),
+    front.animate([{ transform: 'translateX(0)', opacity: 0 }, { opacity: 1, offset: .12 }, { opacity: 1, offset: .85 }, { transform: `translateX(${w + 12}px)`, opacity: 0 }], sweep),
+  ]);
+}
+
+const PLAY = { a: playA, b: playB, c: playC, d: playD };
+
+function buildPhone(v) {
+  const sec = document.createElement('section');
+  sec.className = 'variant v' + v.id;
+  sec.setAttribute('aria-labelledby', 'h-' + v.id);
+  sec.innerHTML = `
+    <header><h2 id="h-${v.id}">${v.name}</h2><p>${v.text}</p><span class="meta">${v.meta}</span></header>
+    <div class="phone"><div class="screen">
+      ${v.id === 'c' ? '<canvas aria-hidden="true"></canvas>' : ''}
+      <div class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i></i><b>✕</b></div>
+      <h3 class="h">Was hast du davon geschafft?</h3>
+      <p class="count" aria-live="polite"><span class="cf" aria-hidden="true">${FLAME}</span><span class="cn">0 von 3 geschafft</span></p>
+      <div class="list">${GOALS.map((g, i) => `
+        <label class="r-check"><input type="checkbox" id="g-${v.id}-${i}">
+          <span class="r-tick" aria-hidden="true">${TICK}</span><span class="r-label">${g}</span></label>`).join('')}</div>
+      <p class="hint">Erledigte Ziele zählen als Gains.</p>
+      <div class="grow"></div>
+      <div class="fake-btn" aria-hidden="true">Weiter</div>
+    </div></div>
+    <div class="controls"><button type="button" data-play>Vorspielen</button><button type="button" data-reset>Zurücksetzen</button></div>`;
+  const phone = { screen: sec.querySelector('.screen'), canvas: sec.querySelector('canvas'), parts: [], raf: 0, timers: [] };
+  const boxes = [...sec.querySelectorAll('.r-check input')];
+  const cf = sec.querySelector('.cf'), cn = sec.querySelector('.cn');
+
+  const update = () => {
+    const n = boxes.filter((b) => b.checked).length;
+    cn.textContent = n === 3 ? 'Alle 3 geschafft' : `${n} von 3 geschafft`;
+    cf.style.transform = `scale(${.55 + n * .2})`;
+    cf.style.opacity = n ? 1 : .35;
+    if (n === 3 && !reduced()) cf.animate([{ filter: 'brightness(1)' }, { filter: 'brightness(1.6)' }, { filter: 'brightness(1)' }], { duration: 600, delay: 200 });
+  };
+  boxes.forEach((b) => b.addEventListener('change', () => {
+    const row = b.closest('.r-check');
+    // schnelles Hin-und-her: alte Flammen abbrechen, CSS-Übergänge des Hakens aber laufen lassen
+    row.getAnimations({ subtree: true }).forEach((a) => { if (!(a instanceof CSSTransition)) a.cancel(); });
+    if (b.checked && !reduced()) { PLAY[v.id](row, phone); navigator.vibrate?.(8); }
+    update();
+  }));
+  const reset = () => {
+    phone.timers.forEach(clearTimeout); phone.timers = [];
+    boxes.forEach((b) => { b.checked = false; b.closest('.r-check').getAnimations({ subtree: true }).forEach((a) => a.cancel()); });
+    update();
+  };
+  sec.querySelector('[data-reset]').addEventListener('click', reset);
+  sec.querySelector('[data-play]').addEventListener('click', () => {
+    reset();
+    boxes.forEach((b, i) => phone.timers.push(setTimeout(() => { b.checked = true; b.dispatchEvent(new Event('change')); }, 400 + i * 1200)));
+  });
+  return sec;
+}
+
+const grid = document.getElementById('grid');
+VARIANTS.forEach((v) => grid.append(buildPhone(v)));
+</script>
+</body>
+</html>
