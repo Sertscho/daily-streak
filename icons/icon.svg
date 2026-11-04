@@ -1,5 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#14110F"/>
-  <path d="M256 56L358.2 284.2A112 112 0 1 1 153.8 284.2Z" fill="#FF7A1A"/>
-  <path d="M256 236L305 325A56 56 0 1 1 207 325Z" fill="#FFB547"/>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="68%" r="60%"><stop offset="0" stop-color="#4a1d0a"/><stop offset=".6" stop-color="#1c1410"/><stop offset="1" stop-color="#110e0c"/></radialGradient>
+    <linearGradient id="o" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FF7A1A"/><stop offset="1" stop-color="#E8432E"/></linearGradient>
+    <linearGradient id="m" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FFB547"/><stop offset="1" stop-color="#FF7A1A"/></linearGradient>
+    <linearGradient id="c" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FFF4E6"/><stop offset="1" stop-color="#FFD27a"/></linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="22"/></filter>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <g transform="translate(256 262) scale(.9) translate(-256 -256)">
+    <path id="outer" d="M256 56 C300 136 396 188 396 300 C396 386 332 452 256 452 C180 452 116 386 116 300 C116 236 156 194 182 154 C188 206 208 234 236 246 C218 178 228 116 256 56 Z" fill="#FF6A1A" opacity=".7" filter="url(#glow)"/>
+    <path d="M256 56 C300 136 396 188 396 300 C396 386 332 452 256 452 C180 452 116 386 116 300 C116 236 156 194 182 154 C188 206 208 234 236 246 C218 178 228 116 256 56 Z" fill="url(#o)"/>
+    <path d="M264 170 C292 226 344 260 344 332 C344 384 306 420 256 420 C206 420 168 384 168 336 C168 296 190 268 212 246 C214 278 230 296 250 304 C238 262 244 212 264 170 Z" fill="url(#m)"/>
+    <path d="M258 270 C280 306 306 326 306 362 C306 392 284 410 256 410 C228 410 206 392 206 362 C206 334 234 308 258 270 Z" fill="url(#c)"/>
+  </g>
 </svg>

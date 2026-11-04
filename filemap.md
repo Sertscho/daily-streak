@@ -15,6 +15,6 @@
 - `sw.js` — Offline-Cache
 - `manifest.webmanifest`, `icons/` — PWA-Installation
 - `tests/` — node --test
-- `tools/make_icons.py` — erzeugt `icons/*.png` (nur Standardbibliothek)
+- `tools/make_icons.py` — rendert `icons/icon.svg` zu `icons/*.png` (macOS qlmanage)
 - `docs/` — SPEC, PLAN
 - `drafts/` — Design-Entwürfe (z. B. `abhak-feuer.html`) (nicht Teil der App, nicht im SW-Cache)
